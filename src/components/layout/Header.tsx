@@ -2,15 +2,16 @@
 
 import React from "react";
 import { CalendarView } from "@/types";
-import { MONTH_NAMES_ID } from "@/constants";
+import { DAY_NAMES_FULL, MONTH_NAMES_ID } from "@/constants";
 import { UserNav } from "./UserNav";
 
 interface HeaderProps {
   currentDate: Date;
+  selectedDate: Date;
   currentView: CalendarView;
   onViewChange: (view: CalendarView) => void;
-  onPrevMonth: () => void;
-  onNextMonth: () => void;
+  onPrevPeriod: () => void;
+  onNextPeriod: () => void;
   onToday: () => void;
   onPinjamTempat: () => void;
   onToggleSidebarMobile: () => void;
@@ -21,10 +22,11 @@ interface HeaderProps {
 
 export function Header({
   currentDate,
+  selectedDate,
   currentView,
   onViewChange,
-  onPrevMonth,
-  onNextMonth,
+  onPrevPeriod,
+  onNextPeriod,
   onToday,
   onPinjamTempat,
   onToggleSidebarMobile,
@@ -34,6 +36,32 @@ export function Header({
 }: HeaderProps) {
   const monthName = MONTH_NAMES_ID[currentDate.getMonth()];
   const year = currentDate.getFullYear();
+
+  const formatDate = (date: Date) =>
+    `${date.getDate()} ${MONTH_NAMES_ID[date.getMonth()]} ${date.getFullYear()}`;
+
+  const getHeaderTitle = () => {
+    if (currentView === "harian") {
+      const weekday = DAY_NAMES_FULL[(selectedDate.getDay() + 6) % 7];
+      return `${weekday}, ${formatDate(selectedDate)}`;
+    }
+
+    if (currentView === "mingguan") {
+      const start = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+      const day = start.getDay();
+      start.setDate(start.getDate() - (day === 0 ? 6 : day - 1));
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+
+      if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+        return `${start.getDate()}–${end.getDate()} ${MONTH_NAMES_ID[end.getMonth()]} ${end.getFullYear()}`;
+      }
+
+      return `${formatDate(start)} – ${formatDate(end)}`;
+    }
+
+    return `${monthName} ${year}`;
+  };
 
   const views: { id: CalendarView; label: string }[] = [
     { id: "mingguan", label: "Mingguan" },
@@ -73,7 +101,7 @@ export function Header({
           <div className="flex items-center gap-1">
             <button
               type="button"
-              onClick={onPrevMonth}
+              onClick={onPrevPeriod}
               aria-label="Periode sebelumnya"
               className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
             >
@@ -102,7 +130,7 @@ export function Header({
 
             <button
               type="button"
-              onClick={onNextMonth}
+              onClick={onNextPeriod}
               aria-label="Periode berikutnya"
               className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
             >
@@ -124,7 +152,7 @@ export function Header({
 
           {/* Month & Year Title */}
           <h2 className="text-lg sm:text-xl font-bold text-gray-950 tracking-tight ml-1">
-            {monthName} {year}
+            {getHeaderTitle()}
           </h2>
         </div>
 

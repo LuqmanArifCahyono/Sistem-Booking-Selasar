@@ -34,7 +34,7 @@ export function MonthView({
 
   // Filter events based on active organizations
   const visibleEvents = events.filter((evt) =>
-    activeOrgIds.has(evt.organizationId)
+    evt.status !== "dibatalkan" && activeOrgIds.has(evt.organizationId)
   );
 
   // Helper date equality

@@ -18,6 +18,10 @@ export interface BookingEvent {
   date: string; // ISO format "YYYY-MM-DD", e.g. "2026-11-09"
   startTime: string; // "09.00"
   endTime: string; // "11.00"
+  personInCharge?: string;
+  purpose?: string;
+  notes?: string;
+  status?: "terjadwal" | "selesai" | "dibatalkan";
   bgClass: string;
   textClass: string;
   subtextClass: string;

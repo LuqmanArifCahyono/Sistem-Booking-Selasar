@@ -5,7 +5,14 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { MainContentPlaceholder } from "@/components/layout/MainContentPlaceholder";
 import { MonthView } from "@/components/bookings/MonthView";
-import { CalendarView, Organization } from "@/types";
+import { WeekView } from "@/components/bookings/WeekView";
+import { DayView } from "@/components/bookings/DayView";
+import { BookingFormModal, BookingFormValues } from "@/components/bookings/BookingFormModal";
+import { BookingDetailModal } from "@/components/bookings/BookingDetailModal";
+import { BookingEditModal } from "@/components/bookings/BookingEditModal";
+import { BookingHistoryView } from "@/components/bookings/BookingHistoryView";
+import { QuickPanelModal, QuickPanelType } from "@/components/layout/QuickPanelModal";
+import { BookingEvent, CalendarView, Organization } from "@/types";
 import { DEFAULT_ORGANIZATIONS, DUMMY_BOOKING_EVENTS } from "@/constants";
 
 export default function Home() {
@@ -33,12 +40,19 @@ export default function Home() {
   const [organizations, setOrganizations] = useState<Organization[]>(
     DEFAULT_ORGANIZATIONS
   );
+  const [bookingEvents, setBookingEvents] = useState<BookingEvent[]>(DUMMY_BOOKING_EVENTS);
+  const [bookingFormOpen, setBookingFormOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<BookingEvent | null>(null);
+  const [editingEvent, setEditingEvent] = useState<BookingEvent | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [conflictMessage, setConflictMessage] = useState<string | null>(null);
 
   // Mobile sidebar drawer state
   const [sidebarOpenMobile, setSidebarOpenMobile] = useState(false);
 
   // Simple feedback alert message for buttons
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const [quickPanel, setQuickPanel] = useState<QuickPanelType | null>(null);
 
   const showNotice = (msg: string) => {
     setActionNotice(msg);
@@ -56,10 +70,76 @@ export default function Home() {
   };
 
   const handleToday = () => {
-    // Mengarahkan kalender ke bulan aktual dan memilih tanggal aktual
     const now = new Date();
+    setToday(now);
     setCurrentDate(new Date(now.getFullYear(), now.getMonth(), 1));
     setSelectedDate(now);
+  };
+
+  const handleNavigatePeriod = (offset: number) => {
+    if (currentView === "mingguan") {
+      const nextDate = new Date(selectedDate);
+      nextDate.setDate(nextDate.getDate() + offset * 7);
+      setSelectedDate(nextDate);
+      setCurrentDate(new Date(nextDate.getFullYear(), nextDate.getMonth(), 1));
+      return;
+    }
+
+    if (currentView === "harian") {
+      const nextDate = new Date(selectedDate);
+      nextDate.setDate(nextDate.getDate() + offset);
+      setSelectedDate(nextDate);
+      setCurrentDate(new Date(nextDate.getFullYear(), nextDate.getMonth(), 1));
+      return;
+    }
+
+    handleChangeMonth(offset);
+  };
+
+  const visibleOrganizationIds = organizations
+    .filter((organization) => organization.checked)
+    .map((organization) => organization.id);
+
+  const handleCreateBooking = (values: BookingFormValues) => {
+    const organization = organizations.find((item) => item.id === values.organizationId);
+    if (!organization) return;
+    const toMinutes = (value: string) => { const [h, m] = value.split(":").map(Number); return h * 60 + m; };
+    const conflict = bookingEvents.find((event) => event.status !== "dibatalkan" && event.date === values.date && toMinutes(values.startTime) < toMinutes(event.endTime.replace(".", ":")) && toMinutes(values.endTime) > toMinutes(event.startTime.replace(".", ":")));
+    if (conflict) {
+      setConflictMessage(`Waktu ${values.startTime}–${values.endTime} bertabrakan dengan jadwal "${conflict.title}" (${conflict.startTime.replace(".", ":")}–${conflict.endTime.replace(".", ":")}). Silakan pilih waktu lain.`);
+      return;
+    }
+
+    const palette: Record<string, { bgClass: string; textClass: string; subtextClass: string; borderClass: string }> = {
+      "himasifo": { bgClass: "bg-blue-100/90 hover:bg-blue-200/90", textClass: "text-blue-950", subtextClass: "text-blue-800", borderClass: "border-blue-300" },
+      "bem-fisip": { bgClass: "bg-purple-100/90 hover:bg-purple-200/90", textClass: "text-purple-950", subtextClass: "text-purple-800", borderClass: "border-purple-300" },
+      "himakom": { bgClass: "bg-emerald-100/90 hover:bg-emerald-200/90", textClass: "text-emerald-950", subtextClass: "text-emerald-800", borderClass: "border-emerald-300" },
+      "himatifa": { bgClass: "bg-amber-100/90 hover:bg-amber-200/90", textClass: "text-amber-950", subtextClass: "text-amber-800", borderClass: "border-amber-300" },
+    };
+
+    const colors = palette[organization.id] ?? palette.himasifo;
+    const newEvent: BookingEvent = {
+      id: `local-${Date.now()}`,
+      title: values.title,
+      organizationId: organization.id,
+      organizationName: organization.name,
+      date: values.date,
+      startTime: values.startTime.replace(":", "."),
+      endTime: values.endTime.replace(":", "."),
+      personInCharge: values.personInCharge,
+      purpose: values.purpose,
+      notes: values.notes,
+      status: "terjadwal",
+      ...colors,
+    };
+
+    setBookingEvents((previous) => [...previous, newEvent]);
+    const [year, month, day] = values.date.split("-").map(Number);
+    const bookingDate = new Date(year, month - 1, day);
+    setSelectedDate(bookingDate);
+    setCurrentDate(new Date(year, month - 1, 1));
+    setBookingFormOpen(false);
+    setSuccessMessage(`Jadwal "${values.title}" berhasil ditambahkan ke simulasi kalender.`);
   };
 
   // Filter toggle handler
@@ -104,11 +184,72 @@ export default function Home() {
         onChangeMonth={handleChangeMonth}
         organizations={organizations}
         onToggleOrg={handleToggleOrg}
-        onOpenHelp={() =>
-          showNotice("Bantuan fasilitas: Hubungi Bagian Kemahasiswaan & Sarpras.")
-        }
+        onOpenHelp={() => setQuickPanel("help")}
         isOpenMobile={sidebarOpenMobile}
         onCloseMobile={() => setSidebarOpenMobile(false)}
+      />
+
+      <BookingDetailModal
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+        onCancelBooking={(event) => {
+          const cancelled = { ...event, status: "dibatalkan" as const };
+          setBookingEvents((previous) => previous.map((item) => item.id === event.id ? cancelled : item));
+          setSelectedEvent(null);
+          showNotice(`Jadwal "${event.title}" dibatalkan dari simulasi kalender.`);
+        }}
+        onEditBooking={(event) => { setEditingEvent(event); setSelectedEvent(null); }}
+      />
+
+      <BookingEditModal event={editingEvent} organizations={organizations} onClose={() => setEditingEvent(null)} onSave={(updated) => {
+        const toMinutes = (value: string) => { const [h,m] = value.split(".").map(Number); return h*60+m; };
+        const conflict = bookingEvents.find((item) => item.id !== updated.id && item.status !== "dibatalkan" && item.date === updated.date && toMinutes(updated.startTime) < toMinutes(item.endTime) && toMinutes(updated.endTime) > toMinutes(item.startTime));
+        if (conflict) { setEditingEvent(null); setConflictMessage(`Perubahan jadwal bertabrakan dengan "${conflict.title}". Silakan pilih waktu lain.`); return; }
+        setBookingEvents((previous) => previous.map((item) => item.id === updated.id ? updated : item));
+        setEditingEvent(null); showNotice(`Jadwal "${updated.title}" berhasil diperbarui.`);
+        const [y,m,d] = updated.date.split("-").map(Number); setSelectedDate(new Date(y,m-1,d)); setCurrentDate(new Date(y,m-1,1));
+      }} />
+
+      {successMessage && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-gray-950/40 p-4">
+          <section role="dialog" aria-modal="true" aria-labelledby="booking-success-title" className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-2xl">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-2xl text-emerald-600">✓</div>
+            <h2 id="booking-success-title" className="mt-4 text-lg font-semibold text-gray-950">Peminjaman berhasil disimpan</h2>
+            <p className="mt-2 text-sm text-gray-600">{successMessage}</p>
+            <p className="mt-2 text-xs text-gray-400">Data ini hanya tersimpan sementara di frontend.</p>
+            <button type="button" onClick={() => setSuccessMessage(null)} className="mt-5 rounded-lg bg-gray-950 px-5 py-2.5 text-xs font-semibold text-white">Kembali ke Kalender</button>
+          </section>
+        </div>
+      )}
+
+      {conflictMessage && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-gray-950/40 p-4">
+          <section role="alertdialog" aria-modal="true" aria-labelledby="booking-conflict-title" className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-6 shadow-2xl">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-2xl text-red-600">!</div>
+            <h2 id="booking-conflict-title" className="mt-4 text-center text-lg font-semibold text-gray-950">Jadwal bentrok</h2>
+            <p className="mt-2 text-center text-sm leading-relaxed text-gray-600">{conflictMessage}</p>
+            <button type="button" onClick={() => setConflictMessage(null)} className="mt-5 w-full rounded-lg bg-gray-950 px-5 py-2.5 text-xs font-semibold text-white">Pilih Waktu Lain</button>
+          </section>
+        </div>
+      )}
+
+      <BookingFormModal
+        open={bookingFormOpen}
+        selectedDate={selectedDate}
+        organizations={organizations}
+        onClose={() => setBookingFormOpen(false)}
+        onSubmit={handleCreateBooking}
+      />
+
+      <QuickPanelModal
+        type={quickPanel}
+        events={bookingEvents}
+        organizations={organizations}
+        today={today}
+        onClose={() => setQuickPanel(null)}
+        onOpenHistory={() => { setCurrentView("histori"); setQuickPanel(null); }}
+        onSaveOrganizations={(ids) => setOrganizations((previous) => previous.map((item) => ({ ...item, checked: ids.includes(item.id) })))}
+        onOpenBooking={(event) => { setSelectedEvent(event); setQuickPanel(null); }}
       />
 
       {/* Main Content Area */}
@@ -116,24 +257,17 @@ export default function Home() {
         {/* Top Header */}
         <Header
           currentDate={currentDate}
+          selectedDate={selectedDate}
           currentView={currentView}
           onViewChange={setCurrentView}
-          onPrevMonth={() => handleChangeMonth(-1)}
-          onNextMonth={() => handleChangeMonth(1)}
+          onPrevPeriod={() => handleNavigatePeriod(-1)}
+          onNextPeriod={() => handleNavigatePeriod(1)}
           onToday={handleToday}
-          onPinjamTempat={() =>
-            showNotice("Formulir Pinjam Tempat akan dibuka pada tahap formulir & modal berikutnya.")
-          }
+          onPinjamTempat={() => setBookingFormOpen(true)}
           onToggleSidebarMobile={() => setSidebarOpenMobile((prev) => !prev)}
-          onOpenProfile={() =>
-            showNotice("Pengguna: Jonathan (Layanan Kampus).")
-          }
-          onOpenNotification={() =>
-            showNotice("Notifikasi: Tidak ada pengajuan yang tertunda.")
-          }
-          onOpenSettings={() =>
-            showNotice("Pengaturan kalender aktif.")
-          }
+          onOpenProfile={() => setQuickPanel("profile")}
+          onOpenNotification={() => setQuickPanel("notifications")}
+          onOpenSettings={() => setQuickPanel("settings")}
         />
 
         {/* Viewport Content */}
@@ -153,20 +287,29 @@ export default function Home() {
                 }
               }}
               organizations={organizations}
-              events={DUMMY_BOOKING_EVENTS}
-              onEventClick={(event) => {
-                showNotice(
-                  `${event.title} (${event.organizationName}) • ${event.startTime}–${event.endTime} WIB`
-                );
-              }}
+              events={bookingEvents}
+              onEventClick={(event) => setSelectedEvent(event)}
             />
-          ) : (
-            <MainContentPlaceholder
-              currentView={currentView}
-              currentDate={currentDate}
+          ) : currentView === "mingguan" ? (
+            <WeekView
               selectedDate={selectedDate}
-              organizations={organizations}
+              today={today}
+              events={bookingEvents}
+              visibleOrganizationIds={visibleOrganizationIds}
+              onEventClick={(event) => setSelectedEvent(event)}
             />
+          ) : currentView === "harian" ? (
+            <DayView
+              selectedDate={selectedDate}
+              today={today}
+              events={bookingEvents}
+              visibleOrganizationIds={visibleOrganizationIds}
+              onEventClick={(event) => setSelectedEvent(event)}
+            />
+          ) : currentView === "histori" ? (
+            <BookingHistoryView events={bookingEvents} currentDate={currentDate} onEventClick={(event) => setSelectedEvent(event)} />
+          ) : (
+            <MainContentPlaceholder currentView={currentView} currentDate={currentDate} selectedDate={selectedDate} organizations={organizations} />
           )}
         </main>
       </div>
