@@ -13,17 +13,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "System Booking Selasar",
-  description: "Sistem Pemesanan / Booking Selasar",
+  title: "SelasarSpace - Sistem Peminjaman Tempat",
+  description: "Sistem Peminjaman Tempat dan Fasilitas Selasar Kampus",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
-      lang="en"
+      lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-white text-gray-900 antialiased">{children}</body>
     </html>
   );
 }
