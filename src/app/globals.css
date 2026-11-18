@@ -1,3 +1,4 @@
+
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -28,9 +29,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
-<<<<<<< HEAD
 
-/* Cursor behavior khusus area dashboard (tidak memengaruhi halaman login/register). */
+/* Cursor behavior khusus area dashboard */
 .dashboard-shell button:not(:disabled),
 .dashboard-shell a[href],
 .dashboard-shell select:not(:disabled),
@@ -47,5 +47,3 @@ body {
 .dashboard-shell [aria-disabled="true"] {
   cursor: not-allowed;
 }
-=======
->>>>>>> origin/rakharendra
