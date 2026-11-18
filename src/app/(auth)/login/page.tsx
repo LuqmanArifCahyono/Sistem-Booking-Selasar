@@ -1,7 +1,8 @@
-// [FRONTEND CHANGE START: Penyesuaian Lebar Kontainer & Padding Halaman Login - Milestone 1]
+// [FRONTEND CHANGE START: Penyelarasan Layout Login dengan Biru Soft di Dark Mode - Milestone 1 Revisi 4]
 import type { Metadata } from "next";
 import { LoginSchedulePreview } from "@/components/auth/LoginSchedulePreview";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Masuk Akun Organisasi — SelasarSpace",
@@ -10,22 +11,29 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen w-full bg-[#F8FAFC] flex flex-col justify-center py-6 sm:py-10 px-3 sm:px-6 lg:px-8">
-      {/* Container utama diperluas agar jarak card ke tepi layar kiri dan kanan tidak terlalu lebar */}
+    <main className="min-h-screen w-full bg-[#F8FAFC] dark:bg-[#090D16] flex flex-col justify-center py-6 sm:py-10 px-3 sm:px-6 lg:px-8 transition-colors duration-200">
+      {/* Container utama diperluas agar jarak card ke tepi layar kiri dan kanan proporsional */}
       <div className="w-full max-w-6xl xl:max-w-7xl mx-auto">
-        {/* Brand & Logo Header */}
-        <div className="flex flex-col mb-5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#0F172B] flex items-center justify-center text-[#FFFFFF] font-bold text-base shadow-xs">
-              S
+        {/* Brand & Logo Header dengan Pengalih Tema Dark Mode */}
+        <div className="flex items-center justify-between gap-4 mb-5">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#0F172B] dark:bg-[#1E293B] dark:border dark:border-[#93C5FD]/30 flex items-center justify-center text-[#FFFFFF] dark:text-[#93C5FD] font-bold text-base shadow-xs">
+                S
+              </div>
+              <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#0F172B] dark:text-[#F8FAFC]">
+                SelasarSpace
+              </span>
             </div>
-            <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#0F172B]">
-              SelasarSpace
-            </span>
+            <p className="text-xs font-medium text-[#62748E] dark:text-[#94A3B8] tracking-wide mt-1">
+              Sistem Peminjaman Tempat
+            </p>
           </div>
-          <p className="text-xs font-medium text-[#62748E] tracking-wide mt-1">
-            Sistem Peminjaman Tempat
-          </p>
+
+          {/* Tombol Dark Mode */}
+          <div className="shrink-0">
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* 2-Column Grid: Card Jadwal & Card Login Sejajar di Garis Atas yang Sama */}
@@ -50,4 +58,4 @@ export default function LoginPage() {
     </main>
   );
 }
-// [FRONTEND CHANGE END: Penyesuaian Lebar Kontainer & Padding Halaman Login - Milestone 1]
+// [FRONTEND CHANGE END: Penyelarasan Layout Login dengan Biru Soft di Dark Mode - Milestone 1 Revisi 4]
