@@ -71,7 +71,7 @@ export function Header({
   ];
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 px-4 py-3 shrink-0">
+    <header className="w-full bg-white dark:bg-[#0F172A] border-b border-gray-200 dark:border-[#1E293B] px-4 py-3 shrink-0 transition-colors">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Left Side: Mobile Menu Button + Date Navigator */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -79,7 +79,7 @@ export function Header({
           <button
             type="button"
             onClick={onToggleSidebarMobile}
-            className="lg:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 border border-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="lg:hidden p-2 rounded-lg text-gray-700 dark:text-[#CBD5E1] hover:bg-gray-100 dark:hover:bg-[#1E293B] border border-gray-200 dark:border-[#334155] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
             aria-label="Buka menu navigasi"
           >
             <svg
@@ -103,7 +103,7 @@ export function Header({
               type="button"
               onClick={onPrevPeriod}
               aria-label="Periode sebelumnya"
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#334155] text-gray-600 dark:text-[#94A3B8] hover:bg-gray-50 dark:hover:bg-[#1E293B] hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
             >
               <svg
                 className="w-4 h-4"
@@ -123,7 +123,7 @@ export function Header({
             <button
               type="button"
               onClick={onToday}
-              className="px-3 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+              className="px-3 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#334155] text-xs font-medium text-gray-700 dark:text-[#CBD5E1] hover:bg-gray-50 dark:hover:bg-[#1E293B] hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
             >
               Hari Ini
             </button>
@@ -132,7 +132,7 @@ export function Header({
               type="button"
               onClick={onNextPeriod}
               aria-label="Periode berikutnya"
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#334155] text-gray-600 dark:text-[#94A3B8] hover:bg-gray-50 dark:hover:bg-[#1E293B] hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
             >
               <svg
                 className="w-4 h-4"
@@ -151,18 +151,18 @@ export function Header({
           </div>
 
           {/* Month & Year Title */}
-          <h2 className="text-lg sm:text-xl font-bold text-gray-950 tracking-tight ml-1">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-950 dark:text-[#F8FAFC] tracking-tight ml-1">
             {getHeaderTitle()}
           </h2>
         </div>
 
         {/* Center & Right Controls */}
-        <div className="flex items-center justify-between sm:justify-end gap-3 flex-wrap">
+        <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 flex-wrap">
           {/* View Switcher Segmented Control */}
           <div
             role="tablist"
             aria-label="Pilihan tampilan kalender"
-            className="flex items-center bg-gray-50 border border-gray-200 p-0.5 rounded-lg"
+            className="flex items-center bg-gray-50 dark:bg-[#111827] border border-gray-200 dark:border-[#1E293B] p-0.5 rounded-lg"
           >
             {views.map((v) => {
               const isActive = currentView === v.id;
@@ -173,10 +173,10 @@ export function Header({
                   type="button"
                   aria-selected={isActive}
                   onClick={() => onViewChange(v.id)}
-                  className={`px-3 py-1.5 text-xs transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none rounded-md ${
+                  className={`px-3 py-1.5 text-xs transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none rounded-md cursor-pointer ${
                     isActive
-                      ? "bg-white text-gray-950 font-medium shadow-2xs border border-gray-200/80"
-                      : "text-gray-500 hover:text-gray-900"
+                      ? "bg-white dark:bg-[#1E293B] text-gray-950 dark:text-[#F8FAFC] font-medium shadow-2xs border border-gray-200/80 dark:border-slate-700"
+                      : "text-gray-500 dark:text-[#94A3B8] hover:text-gray-900 dark:hover:text-[#F8FAFC]"
                   }`}
                 >
                   {v.label}
@@ -189,14 +189,14 @@ export function Header({
           <button
             type="button"
             onClick={onPinjamTempat}
-            className="h-9 px-4 rounded-full bg-gray-950 hover:bg-gray-800 text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 shadow-2xs transition-all active:scale-98 focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+            className="h-9 px-4 rounded-full bg-gray-950 hover:bg-gray-800 dark:bg-[#2563EB] dark:hover:bg-blue-600 text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 shadow-2xs transition-all active:scale-98 focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
           >
             <span className="text-base leading-none font-semibold">+</span>
             <span>Pinjam Tempat</span>
           </button>
 
           {/* User Nav and Quick Actions */}
-          <div className="hidden sm:block pl-1">
+          <div className="pl-1">
             <UserNav
               onOpenProfile={onOpenProfile}
               onOpenNotification={onOpenNotification}

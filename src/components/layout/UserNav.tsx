@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CURRENT_USER } from "@/constants";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface UserNavProps {
   onOpenProfile?: () => void;
@@ -18,12 +19,15 @@ export function UserNav({
 
   return (
     <div className="flex items-center gap-2">
+      {/* Theme Toggle Button */}
+      <ThemeToggle />
+
       {/* Notifications Button */}
       <button
         type="button"
         onClick={onOpenNotification}
         aria-label="Notifikasi peminjaman"
-        className="relative w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+        className="relative w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#334155] bg-white dark:bg-[#1E293B] text-gray-700 dark:text-[#CBD5E1] hover:bg-gray-50 dark:hover:bg-[#334155] hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
       >
         <svg
           className="w-4 h-4"
@@ -40,7 +44,7 @@ export function UserNav({
         </svg>
         {showNotificationBadge && (
           <span
-            className="absolute top-2 right-2 w-1.5 h-1.5 bg-blue-600 rounded-full"
+            className="absolute top-2 right-2 w-1.5 h-1.5 bg-blue-600 dark:bg-[#93C5FD] rounded-full"
             aria-hidden="true"
           />
         )}
@@ -51,7 +55,7 @@ export function UserNav({
         type="button"
         onClick={onOpenSettings}
         aria-label="Pengaturan kalender"
-        className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+        className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 dark:border-[#334155] bg-white dark:bg-[#1E293B] text-gray-700 dark:text-[#CBD5E1] hover:bg-gray-50 dark:hover:bg-[#334155] hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
       >
         <svg
           className="w-4 h-4"
@@ -79,9 +83,9 @@ export function UserNav({
         type="button"
         onClick={onOpenProfile}
         aria-label={`Profil pengguna: ${CURRENT_USER.name}`}
-        className="w-9 h-9 rounded-full overflow-hidden border border-gray-300 bg-gray-100 flex items-center justify-center hover:ring-2 hover:ring-gray-300 transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+        className="w-9 h-9 rounded-full overflow-hidden border border-gray-300 dark:border-[#334155] bg-gray-100 dark:bg-[#1E293B] flex items-center justify-center hover:ring-2 hover:ring-gray-300 dark:hover:ring-slate-600 transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
       >
-        <span className="text-xs font-semibold text-gray-700 select-none">
+        <span className="text-xs font-semibold text-gray-700 dark:text-[#93C5FD] select-none">
           {CURRENT_USER.name.substring(0, 2).toUpperCase()}
         </span>
       </button>

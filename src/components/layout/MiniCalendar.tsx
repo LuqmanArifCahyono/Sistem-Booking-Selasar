@@ -101,7 +101,7 @@ export function MiniCalendar({
       <div className="mb-3 px-1">
         <label
           htmlFor="sidebar-calendar-date-picker"
-          className="mb-1.5 block text-xs font-medium text-gray-600"
+          className="mb-1.5 block text-xs font-medium text-gray-600 dark:text-[#94A3B8]"
         >
           Pilih tanggal
         </label>
@@ -110,14 +110,14 @@ export function MiniCalendar({
           type="date"
           value={formatDateInput(selectedDate)}
           onChange={(event) => handleDatePickerChange(event.target.value)}
-          className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          className="h-9 w-full rounded-lg border border-gray-200 dark:border-[#334155] bg-white dark:bg-[#111827] px-2.5 text-sm text-gray-700 dark:text-[#F8FAFC] outline-none transition-colors hover:border-gray-300 dark:hover:border-slate-500 focus:border-blue-500 dark:focus:border-[#93C5FD] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 cursor-pointer"
           aria-label="Pilih tanggal untuk ditampilkan di kalender"
         />
       </div>
 
       {/* Month Navigator Header */}
       <div className="flex items-center justify-between mb-3 px-1">
-        <span className="text-sm font-semibold text-gray-900">
+        <span className="text-sm font-semibold text-gray-900 dark:text-[#F8FAFC]">
           {MONTH_NAMES_ID[month]} {year}
         </span>
         <div className="flex items-center gap-1">
@@ -125,7 +125,7 @@ export function MiniCalendar({
             type="button"
             onClick={() => onChangeMonth(-1)}
             aria-label="Bulan sebelumnya"
-            className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+            className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-[#1E293B] text-gray-600 dark:text-[#94A3B8] transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
           >
             <svg
               className="w-4 h-4"
@@ -145,7 +145,7 @@ export function MiniCalendar({
             type="button"
             onClick={() => onChangeMonth(1)}
             aria-label="Bulan berikutnya"
-            className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-100 text-gray-600 transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none"
+            className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-[#1E293B] text-gray-600 dark:text-[#94A3B8] transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
           >
             <svg
               className="w-4 h-4"
@@ -169,7 +169,7 @@ export function MiniCalendar({
         {DAY_NAMES_SHORT.map((name, i) => (
           <span
             key={i}
-            className="text-[11px] font-medium text-gray-400 py-1 select-none"
+            className="text-[11px] font-medium text-gray-400 dark:text-[#64748B] py-1 select-none"
           >
             {name}
           </span>
@@ -182,17 +182,17 @@ export function MiniCalendar({
           const isSelected = isSameDay(item.date, selectedDate);
           const isCurrentToday = isTodayDate(item.date);
 
-          let dateStyle = "text-gray-700 hover:bg-gray-100";
+          let dateStyle = "text-gray-700 dark:text-[#CBD5E1] hover:bg-gray-100 dark:hover:bg-[#1E293B]";
           if (!item.isCurrentMonth) {
-            dateStyle = "text-gray-300 hover:bg-gray-50";
+            dateStyle = "text-gray-300 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-[#1E293B]/40";
           }
 
           if (isCurrentToday && isSelected) {
-            // Hari ini dan sedang dipilih: badge hitam dengan ring amber
-            dateStyle = "bg-gray-950 text-white font-bold ring-2 ring-amber-400 shadow-xs";
+            // Hari ini dan sedang dipilih: badge dengan ring amber
+            dateStyle = "bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] font-bold ring-2 ring-amber-400 shadow-xs dark:border dark:border-[#93C5FD]/40";
           } else if (isCurrentToday) {
-            // Hari ini tetapi tidak sedang dipilih: badge hitam
-            dateStyle = "bg-gray-950 text-white font-bold shadow-2xs hover:bg-gray-800";
+            // Hari ini tetapi tidak sedang dipilih
+            dateStyle = "bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] font-bold shadow-2xs hover:bg-gray-800 dark:hover:bg-[#334155] dark:border dark:border-[#93C5FD]/40";
           } else if (isSelected) {
             // Dipilih tetapi bukan hari ini: badge amber
             dateStyle = "bg-amber-500 text-white font-semibold shadow-xs hover:bg-amber-600";
@@ -203,7 +203,7 @@ export function MiniCalendar({
               key={idx}
               type="button"
               onClick={() => onSelectDate(item.date)}
-              className={`w-7 h-7 mx-auto flex items-center justify-center rounded-full text-xs transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none ${dateStyle}`}
+              className={`w-7 h-7 mx-auto flex items-center justify-center rounded-full text-xs transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer ${dateStyle}`}
               aria-label={`${item.day} ${MONTH_NAMES_ID[item.date.getMonth()]} ${item.date.getFullYear()}${isCurrentToday ? " (Hari ini)" : ""}${isSelected ? " (Dipilih)" : ""}`}
               aria-pressed={isSelected}
             >

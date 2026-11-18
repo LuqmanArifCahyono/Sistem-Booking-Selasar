@@ -111,10 +111,10 @@ export default function Home() {
     }
 
     const palette: Record<string, { bgClass: string; textClass: string; subtextClass: string; borderClass: string }> = {
-      "himasifo": { bgClass: "bg-blue-100/90 hover:bg-blue-200/90", textClass: "text-blue-950", subtextClass: "text-blue-800", borderClass: "border-blue-300" },
-      "bem-fisip": { bgClass: "bg-purple-100/90 hover:bg-purple-200/90", textClass: "text-purple-950", subtextClass: "text-purple-800", borderClass: "border-purple-300" },
-      "himakom": { bgClass: "bg-emerald-100/90 hover:bg-emerald-200/90", textClass: "text-emerald-950", subtextClass: "text-emerald-800", borderClass: "border-emerald-300" },
-      "himatifa": { bgClass: "bg-amber-100/90 hover:bg-amber-200/90", textClass: "text-amber-950", subtextClass: "text-amber-800", borderClass: "border-amber-300" },
+      "himasifo": { bgClass: "bg-blue-100/90 hover:bg-blue-200/90 dark:bg-blue-950/60 dark:hover:bg-blue-900/60", textClass: "text-blue-950 dark:text-blue-100", subtextClass: "text-blue-800 dark:text-blue-300", borderClass: "border-blue-300 dark:border-blue-800" },
+      "bem-fisip": { bgClass: "bg-purple-100/90 hover:bg-purple-200/90 dark:bg-purple-950/60 dark:hover:bg-purple-900/60", textClass: "text-purple-950 dark:text-purple-100", subtextClass: "text-purple-800 dark:text-purple-300", borderClass: "border-purple-300 dark:border-purple-800" },
+      "himakom": { bgClass: "bg-emerald-100/90 hover:bg-emerald-200/90 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60", textClass: "text-emerald-950 dark:text-emerald-100", subtextClass: "text-emerald-800 dark:text-emerald-300", borderClass: "border-emerald-300 dark:border-emerald-800" },
+      "himatifa": { bgClass: "bg-amber-100/90 hover:bg-amber-200/90 dark:bg-amber-950/60 dark:hover:bg-amber-900/60", textClass: "text-amber-950 dark:text-amber-100", subtextClass: "text-amber-800 dark:text-amber-300", borderClass: "border-amber-300 dark:border-amber-800" },
     };
 
     const colors = palette[organization.id] ?? palette.himasifo;
@@ -150,16 +150,16 @@ export default function Home() {
   };
 
   return (
-    <div className="dashboard-shell flex h-screen w-full bg-white overflow-hidden text-gray-900 font-sans">
+    <div className="dashboard-shell flex h-screen w-full bg-white dark:bg-[#090D16] overflow-hidden text-gray-900 dark:text-[#F8FAFC] font-sans transition-colors duration-200">
       {/* Action Notification Toast */}
       {actionNotice && (
-        <div className="fixed bottom-4 right-4 z-60 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-fadeIn border border-gray-700">
+        <div className="fixed bottom-4 right-4 z-60 bg-gray-900 dark:bg-[#1E293B] text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-fadeIn border border-gray-700 dark:border-slate-700">
           <span className="w-2 h-2 rounded-full bg-blue-400" />
           <span>{actionNotice}</span>
           <button
             type="button"
             onClick={() => setActionNotice(null)}
-            className="ml-2 text-gray-400 hover:text-white"
+            className="ml-2 text-gray-400 hover:text-white cursor-pointer"
             aria-label="Tutup notifikasi"
           >
             ✕
@@ -211,24 +211,24 @@ export default function Home() {
       }} />
 
       {successMessage && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-gray-950/40 p-4">
-          <section role="dialog" aria-modal="true" aria-labelledby="booking-success-title" className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-2xl">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-2xl text-emerald-600">✓</div>
-            <h2 id="booking-success-title" className="mt-4 text-lg font-semibold text-gray-950">Peminjaman berhasil disimpan</h2>
-            <p className="mt-2 text-sm text-gray-600">{successMessage}</p>
-            <p className="mt-2 text-xs text-gray-400">Data ini hanya tersimpan sementara di frontend.</p>
-            <button type="button" onClick={() => setSuccessMessage(null)} className="mt-5 rounded-lg bg-gray-950 px-5 py-2.5 text-xs font-semibold text-white">Kembali ke Kalender</button>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-gray-950/45 dark:bg-black/70 p-4">
+          <section role="dialog" aria-modal="true" aria-labelledby="booking-success-title" className="w-full max-w-md rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-2xl transition-colors">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-2xl text-emerald-600 dark:text-emerald-400">✓</div>
+            <h2 id="booking-success-title" className="mt-4 text-lg font-semibold text-gray-950 dark:text-[#F8FAFC]">Peminjaman berhasil disimpan</h2>
+            <p className="mt-2 text-sm text-gray-600 dark:text-[#CBD5E1]">{successMessage}</p>
+            <p className="mt-2 text-xs text-gray-400 dark:text-[#64748B]">Data ini hanya tersimpan sementara di frontend.</p>
+            <button type="button" onClick={() => setSuccessMessage(null)} className="mt-5 rounded-lg bg-gray-950 hover:bg-gray-800 dark:bg-[#2563EB] dark:hover:bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white cursor-pointer shadow-xs transition-colors">Kembali ke Kalender</button>
           </section>
         </div>
       )}
 
       {conflictMessage && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-gray-950/40 p-4">
-          <section role="alertdialog" aria-modal="true" aria-labelledby="booking-conflict-title" className="w-full max-w-md rounded-2xl border border-red-100 bg-white p-6 shadow-2xl">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-2xl text-red-600">!</div>
-            <h2 id="booking-conflict-title" className="mt-4 text-center text-lg font-semibold text-gray-950">Jadwal bentrok</h2>
-            <p className="mt-2 text-center text-sm leading-relaxed text-gray-600">{conflictMessage}</p>
-            <button type="button" onClick={() => setConflictMessage(null)} className="mt-5 w-full rounded-lg bg-gray-950 px-5 py-2.5 text-xs font-semibold text-white">Pilih Waktu Lain</button>
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-gray-950/45 dark:bg-black/70 p-4">
+          <section role="alertdialog" aria-modal="true" aria-labelledby="booking-conflict-title" className="w-full max-w-md rounded-2xl border border-red-100 dark:border-red-900/60 bg-white dark:bg-[#111827] p-6 shadow-2xl transition-colors">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/50 text-2xl text-red-600 dark:text-red-400">!</div>
+            <h2 id="booking-conflict-title" className="mt-4 text-center text-lg font-semibold text-gray-950 dark:text-[#F8FAFC]">Jadwal bentrok</h2>
+            <p className="mt-2 text-center text-sm leading-relaxed text-gray-600 dark:text-[#CBD5E1]">{conflictMessage}</p>
+            <button type="button" onClick={() => setConflictMessage(null)} className="mt-5 w-full rounded-lg bg-gray-950 hover:bg-gray-800 dark:bg-[#2563EB] dark:hover:bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white cursor-pointer shadow-xs transition-colors">Pilih Waktu Lain</button>
           </section>
         </div>
       )}
@@ -271,7 +271,7 @@ export default function Home() {
         />
 
         {/* Viewport Content */}
-        <main className="flex-1 flex flex-col overflow-hidden bg-white">
+        <main className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-[#090D16] transition-colors">
           {currentView === "bulan" ? (
             <MonthView
               currentDate={currentDate}

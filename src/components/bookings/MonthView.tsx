@@ -109,20 +109,20 @@ export function MonthView({
   ).length;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white overflow-hidden select-none">
+    <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#090D16] overflow-hidden select-none transition-colors">
       {/* Scrollable Container for Tablet/Mobile */}
       <div className="flex-1 flex flex-col overflow-x-auto min-h-0">
-        <div className="min-w-[760px] flex-1 flex flex-col h-full border-b border-gray-200">
+        <div className="min-w-[760px] flex-1 flex flex-col h-full border-b border-gray-200 dark:border-[#1E293B]">
           {/* Days of Week Header */}
           <div
             role="row"
-            className="grid grid-cols-7 border-b border-gray-200 bg-white text-center py-2 shrink-0"
+            className="grid grid-cols-7 border-b border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#0F172A] text-center py-2 shrink-0 transition-colors"
           >
             {DAY_NAMES_FULL.map((name, i) => (
               <div
                 key={i}
                 role="columnheader"
-                className="text-xs font-semibold text-gray-700 tracking-wider uppercase"
+                className="text-xs font-semibold text-gray-700 dark:text-[#94A3B8] tracking-wider uppercase"
               >
                 {name}
               </div>
@@ -133,7 +133,7 @@ export function MonthView({
           <div
             role="grid"
             aria-label={`Kalender ${monthName} ${year}`}
-            className="flex-1 grid grid-cols-7 grid-rows-6 divide-x divide-gray-200 border-l border-gray-200 min-h-[560px]"
+            className="flex-1 grid grid-cols-7 grid-rows-6 divide-x divide-gray-200 dark:divide-[#1E293B] border-l border-gray-200 dark:border-[#1E293B] min-h-[560px]"
           >
             {gridDays.map((cell, idx) => {
               const dateKey = formatDateKey(cell.date);
@@ -153,13 +153,13 @@ export function MonthView({
                       onSelectDate(cell.date);
                     }
                   }}
-                  className={`border-b border-gray-200 p-2 sm:p-2.5 flex flex-col justify-start gap-1 transition-colors relative cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:z-10 ${
+                  className={`border-b border-gray-200 dark:border-[#1E293B] p-2 sm:p-2.5 flex flex-col justify-start gap-1 transition-colors relative cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:z-10 ${
                     cell.isCurrentMonth
-                      ? "bg-white hover:bg-gray-50/60"
-                      : "bg-gray-50/30 hover:bg-gray-50/70"
+                      ? "bg-white dark:bg-[#090D16] hover:bg-gray-50/60 dark:hover:bg-[#111827]/70"
+                      : "bg-gray-50/30 dark:bg-[#0F172A]/40 hover:bg-gray-50/70 dark:hover:bg-[#0F172A]/70"
                   } ${
                     selected
-                      ? "ring-1 ring-inset ring-amber-400/80 bg-amber-50/20"
+                      ? "ring-1 ring-inset ring-amber-400/80 bg-amber-50/20 dark:bg-amber-950/20"
                       : ""
                   }`}
                   aria-label={`${cell.day} ${
@@ -176,14 +176,14 @@ export function MonthView({
                   <div className="flex items-center justify-between">
                     {today && selected ? (
                       <span
-                        className="w-6 h-6 rounded-full bg-gray-950 text-white flex items-center justify-center font-bold text-xs ring-2 ring-amber-400 ring-offset-1 shadow-2xs"
+                        className="w-6 h-6 rounded-full bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] flex items-center justify-center font-bold text-xs ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-[#090D16] dark:border dark:border-[#93C5FD]/40 shadow-2xs"
                         aria-label="Hari ini dan dipilih"
                       >
                         {cell.day}
                       </span>
                     ) : today ? (
                       <span
-                        className="w-6 h-6 rounded-full bg-gray-950 text-white flex items-center justify-center font-bold text-xs shadow-2xs"
+                        className="w-6 h-6 rounded-full bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] flex items-center justify-center font-bold text-xs dark:border dark:border-[#93C5FD]/40 shadow-2xs"
                         aria-label="Hari ini"
                       >
                         {cell.day}
@@ -199,8 +199,8 @@ export function MonthView({
                       <span
                         className={`text-xs ${
                           cell.isCurrentMonth
-                            ? "text-gray-800 font-medium group-hover:text-gray-950"
-                            : "text-gray-400 font-normal"
+                            ? "text-gray-800 dark:text-[#CBD5E1] font-medium group-hover:text-gray-950 dark:group-hover:text-[#F8FAFC]"
+                            : "text-gray-400 dark:text-[#64748B] font-normal"
                         }`}
                       >
                         {cell.day}
@@ -218,7 +218,7 @@ export function MonthView({
                           e.stopPropagation();
                           onEventClick(event);
                         }}
-                        className={`w-full text-left p-2 rounded-lg transition-transform active:scale-98 shadow-2xs cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${event.bgClass} ${event.textClass}`}
+                        className={`w-full text-left p-2 rounded-lg transition-transform active:scale-98 shadow-2xs cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 border ${event.borderClass} ${event.bgClass} ${event.textClass}`}
                         aria-label={`${event.title}, diselenggarakan oleh ${event.organizationName}, pukul ${event.startTime} sampai ${event.endTime}`}
                       >
                         <div className="font-semibold text-xs leading-tight truncate">
@@ -245,11 +245,11 @@ export function MonthView({
       </div>
 
       {/* Bottom Status Bar */}
-      <footer className="px-5 py-2.5 bg-white border-t border-gray-100 flex items-center justify-between text-xs text-gray-500 shrink-0">
-        <span className="font-normal text-gray-600">
+      <footer className="px-5 py-2.5 bg-white dark:bg-[#0F172A] border-t border-gray-100 dark:border-[#1E293B] flex items-center justify-between text-xs text-gray-500 dark:text-[#94A3B8] shrink-0 transition-colors">
+        <span className="font-normal text-gray-600 dark:text-[#CBD5E1]">
           {currentMonthEventsCount} jadwal bulan ini
         </span>
-        <span className="font-normal text-gray-400">
+        <span className="font-normal text-gray-400 dark:text-[#64748B]">
           {monthName} {year}
         </span>
       </footer>

@@ -96,12 +96,12 @@ export function BookingFormModal({
   };
 
   const inputClass =
-    "mt-1.5 w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
-  const labelClass = "block text-xs font-medium text-gray-700";
+    "mt-1.5 w-full rounded-lg border border-gray-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] px-3 py-2.5 text-sm text-gray-900 dark:text-[#F8FAFC] placeholder-gray-400 dark:placeholder-[#64748B] outline-none transition focus:border-blue-500 dark:focus:border-[#93C5FD] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40";
+  const labelClass = "block text-xs font-medium text-gray-700 dark:text-[#CBD5E1]";
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-950/45 p-3 sm:p-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-950/45 dark:bg-black/70 p-3 sm:p-6"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
@@ -111,14 +111,14 @@ export function BookingFormModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="booking-form-title"
-        className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+        className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#111827] shadow-2xl transition-colors"
       >
-        <header className="flex items-start justify-between border-b border-gray-100 px-5 py-4 sm:px-6">
+        <header className="flex items-start justify-between border-b border-gray-100 dark:border-[#1E293B] px-5 py-4 sm:px-6">
           <div>
-            <h2 id="booking-form-title" className="text-lg font-semibold text-gray-950">
+            <h2 id="booking-form-title" className="text-lg font-semibold text-gray-950 dark:text-[#F8FAFC]">
               Form Peminjaman Tempat
             </h2>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
               Lengkapi informasi kegiatan yang akan diajukan.
             </p>
           </div>
@@ -126,7 +126,7 @@ export function BookingFormModal({
             type="button"
             onClick={onClose}
             aria-label="Tutup formulir"
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="rounded-lg p-2 text-gray-500 dark:text-[#94A3B8] hover:bg-gray-100 dark:hover:bg-[#1E293B] hover:text-gray-900 dark:hover:text-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
               <path strokeLinecap="round" d="m6 6 12 12M18 6 6 18" />
@@ -160,15 +160,15 @@ export function BookingFormModal({
               <legend className={labelClass}>Tanggal dan jam peminjaman</legend>
               <div className="mt-1.5 grid gap-3 sm:grid-cols-3">
                 <div className="sm:col-span-1">
-                  <label htmlFor="booking-date" className="text-[11px] text-gray-500">Tanggal</label>
+                  <label htmlFor="booking-date" className="text-[11px] text-gray-500 dark:text-[#94A3B8]">Tanggal</label>
                   <input id="booking-date" type="date" className={inputClass} value={date} onChange={(e) => setDate(e.target.value)} required />
                 </div>
                 <div>
-                  <label htmlFor="booking-start" className="text-[11px] text-gray-500">Mulai</label>
+                  <label htmlFor="booking-start" className="text-[11px] text-gray-500 dark:text-[#94A3B8]">Mulai</label>
                   <input id="booking-start" type="time" className={inputClass} value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
                 </div>
                 <div>
-                  <label htmlFor="booking-end" className="text-[11px] text-gray-500">Selesai</label>
+                  <label htmlFor="booking-end" className="text-[11px] text-gray-500 dark:text-[#94A3B8]">Selesai</label>
                   <input id="booking-end" type="time" className={inputClass} value={endTime} onChange={(e) => setEndTime(e.target.value)} required />
                 </div>
               </div>
@@ -180,23 +180,23 @@ export function BookingFormModal({
             </div>
 
             <div>
-              <label htmlFor="booking-notes" className={labelClass}>Catatan tambahan <span className="font-normal text-gray-400">(opsional)</span></label>
+              <label htmlFor="booking-notes" className={labelClass}>Catatan tambahan <span className="font-normal text-gray-400 dark:text-[#64748B]">(opsional)</span></label>
               <textarea id="booking-notes" className={`${inputClass} min-h-20 resize-y`} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Kebutuhan ruang, peralatan, atau informasi tambahan." maxLength={500} />
             </div>
 
             {error && (
-              <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">{error}</p>
+              <p role="alert" className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 px-3 py-2 text-xs text-red-700 dark:text-red-300">{error}</p>
             )}
-            <p className="text-[11px] leading-relaxed text-gray-500">
+            <p className="text-[11px] leading-relaxed text-gray-500 dark:text-[#94A3B8]">
               Ini merupakan simulasi frontend. Data pengajuan hanya disimpan sementara pada tampilan aplikasi dan belum dikirim ke server.
             </p>
           </div>
 
-          <footer className="flex items-center justify-end gap-2 border-t border-gray-100 px-5 py-4 sm:px-6">
-            <button type="button" onClick={onClose} className="rounded-lg border border-gray-200 px-4 py-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+          <footer className="flex items-center justify-end gap-2 border-t border-gray-100 dark:border-[#1E293B] px-5 py-4 sm:px-6">
+            <button type="button" onClick={onClose} className="rounded-lg border border-gray-200 dark:border-[#334155] px-4 py-2.5 text-xs font-medium text-gray-700 dark:text-[#CBD5E1] hover:bg-gray-50 dark:hover:bg-[#1E293B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer transition-colors">
               Batal
             </button>
-            <button type="submit" className="rounded-lg bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+            <button type="submit" className="rounded-lg bg-blue-600 dark:bg-[#2563EB] px-5 py-2.5 text-xs font-semibold text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 cursor-pointer shadow-xs transition-colors">
               Simpan jadwal
             </button>
           </footer>

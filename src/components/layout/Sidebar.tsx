@@ -37,14 +37,14 @@ export function Sidebar({
       {isOpenMobile && (
         <div
           onClick={onCloseMobile}
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-2xs transition-opacity cursor-pointer"
+          className="fixed inset-0 bg-black/40 dark:bg-black/70 z-40 lg:hidden backdrop-blur-2xs transition-opacity cursor-pointer"
           aria-hidden="true"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed lg:static top-0 left-0 z-50 h-full w-[270px] bg-white border-r border-gray-200 flex flex-col justify-between p-4 overflow-y-auto transition-transform duration-300 ease-in-out shrink-0 ${
+        className={`fixed lg:static top-0 left-0 z-50 h-full w-[270px] bg-white dark:bg-[#0F172A] border-r border-gray-200 dark:border-[#1E293B] flex flex-col justify-between p-4 overflow-y-auto transition-transform duration-300 ease-in-out shrink-0 ${
           isOpenMobile
             ? "translate-x-0 shadow-xl"
             : "-translate-x-full lg:translate-x-0"
@@ -52,12 +52,12 @@ export function Sidebar({
       >
         <div className="space-y-6">
           {/* Logo & Header */}
-          <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+          <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-[#1E293B]">
             <div>
-              <h1 className="text-xl font-bold text-gray-950 tracking-tight leading-none">
+              <h1 className="text-xl font-bold text-gray-950 dark:text-[#F8FAFC] tracking-tight leading-none">
                 SelasarSpace
               </h1>
-              <p className="text-xs text-gray-500 mt-1 font-normal">
+              <p className="text-xs text-gray-500 dark:text-[#94A3B8] mt-1 font-normal">
                 Sistem Peminjaman Tempat
               </p>
             </div>
@@ -66,7 +66,7 @@ export function Sidebar({
             <button
               type="button"
               onClick={onCloseMobile}
-              className="lg:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="lg:hidden p-1.5 rounded-lg text-gray-500 dark:text-[#94A3B8] hover:bg-gray-100 dark:hover:bg-[#1E293B] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
               aria-label="Tutup menu sidebar"
             >
               <svg
@@ -111,16 +111,16 @@ export function Sidebar({
         </div>
 
         {/* Footer Sidebar */}
-        <div className="pt-6 mt-6 border-t border-gray-100 space-y-1 text-xs">
-          <div className="text-gray-900 font-medium">Butuh bantuan?</div>
+        <div className="pt-6 mt-6 border-t border-gray-100 dark:border-[#1E293B] space-y-1 text-xs">
+          <div className="text-gray-900 dark:text-[#F8FAFC] font-medium">Butuh bantuan?</div>
           <button
             type="button"
             onClick={onOpenHelp}
-            className="text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-1 font-medium focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded"
+            className="text-blue-600 dark:text-[#93C5FD] hover:text-blue-700 dark:hover:text-blue-300 hover:underline inline-flex items-center gap-1 font-medium focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded cursor-pointer"
           >
             Hubungi pengelola fasilitas ↗
           </button>
-          <div className="text-[11px] text-gray-400 pt-2">
+          <div className="text-[11px] text-gray-400 dark:text-[#64748B] pt-2">
             SelasarSpace · Layanan kampus
           </div>
         </div>

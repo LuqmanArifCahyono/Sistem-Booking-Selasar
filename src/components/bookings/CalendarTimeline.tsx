@@ -71,15 +71,15 @@ export function CalendarTimeline({
   );
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-white">
+    <div className="flex-1 min-h-0 flex flex-col bg-white dark:bg-[#090D16] transition-colors">
       <div className="flex-1 min-h-0 overflow-auto">
         <div className={isWeek ? "min-w-[850px]" : "min-w-[420px]"}>
-          <div className="sticky top-0 z-20 border-b border-gray-200 bg-white">
+          <div className="sticky top-0 z-20 border-b border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#0F172A] transition-colors">
             <div
               className="grid"
               style={{ gridTemplateColumns: `68px repeat(${dates.length}, minmax(0, 1fr))` }}
             >
-              <div className="h-[58px] flex items-center justify-center border-r border-gray-200 text-[10px] font-medium tracking-wide text-gray-500">
+              <div className="h-[58px] flex items-center justify-center border-r border-gray-200 dark:border-[#1E293B] text-[10px] font-medium tracking-wide text-gray-500 dark:text-[#94A3B8]">
                 WIB
               </div>
               {dates.map((date) => {
@@ -90,22 +90,22 @@ export function CalendarTimeline({
                 return (
                   <div
                     key={dateKey(date)}
-                    className={`h-[58px] flex flex-col items-center justify-center gap-0.5 border-r border-gray-200 ${
-                      selected ? "bg-blue-50/60" : "bg-white"
+                    className={`h-[58px] flex flex-col items-center justify-center gap-0.5 border-r border-gray-200 dark:border-[#1E293B] transition-colors ${
+                      selected ? "bg-blue-50/60 dark:bg-blue-950/30" : "bg-white dark:bg-[#0F172A]"
                     }`}
                   >
-                    <span className={`text-[10px] font-semibold tracking-wide uppercase ${selected ? "text-gray-950" : "text-gray-500"}`}>
+                    <span className={`text-[10px] font-semibold tracking-wide uppercase ${selected ? "text-gray-950 dark:text-[#F8FAFC]" : "text-gray-500 dark:text-[#94A3B8]"}`}>
                       {weekday.slice(0, 3)}
                     </span>
                     <span
                       className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${
                         isToday
                           ? selected
-                            ? "bg-gray-950 text-white font-bold ring-2 ring-amber-400 ring-offset-1"
-                            : "bg-gray-950 text-white font-bold"
+                            ? "bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] font-bold ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-[#0F172A] dark:border dark:border-[#93C5FD]/40"
+                            : "bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] font-bold dark:border dark:border-[#93C5FD]/40"
                           : selected
                             ? "bg-amber-500 text-white font-semibold"
-                            : "text-gray-800"
+                            : "text-gray-800 dark:text-[#CBD5E1]"
                       }`}
                       aria-label={`${formatDate(date)}${isToday ? ", hari ini" : ""}${selected ? ", dipilih" : ""}`}
                     >
@@ -123,13 +123,13 @@ export function CalendarTimeline({
             role="group"
             aria-label={isWeek ? "Jadwal satu minggu" : `Jadwal ${formatDate(dates[0])}`}
           >
-            <div className="relative border-r border-gray-200 bg-white" style={{ height: TOTAL_HEIGHT }}>
+            <div className="relative border-r border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#0F172A]" style={{ height: TOTAL_HEIGHT }}>
               {Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, index) => {
                 const hour = START_HOUR + index;
                 return (
                   <div
                     key={hour}
-                    className={`absolute left-0 right-0 pr-2 text-right text-[10px] text-gray-500 ${
+                    className={`absolute left-0 right-0 pr-2 text-right text-[10px] text-gray-500 dark:text-[#94A3B8] ${
                       index === 0
                         ? "translate-y-0"
                         : index === END_HOUR - START_HOUR
@@ -152,12 +152,11 @@ export function CalendarTimeline({
               return (
                 <div
                   key={dateKey(date)}
-                  className={`relative border-r border-gray-200 ${
-                    selected ? "bg-blue-50/25" : isToday ? "bg-gray-50/40" : "bg-white"
+                  className={`relative border-r border-gray-200 dark:border-[#1E293B] [background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_63px,#e5e7eb_63px,#e5e7eb_64px)] dark:[background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_63px,#1e293b_63px,#1e293b_64px)] ${
+                    selected ? "bg-blue-50/25 dark:bg-blue-950/20" : isToday ? "bg-gray-50/40 dark:bg-[#0F172A]/40" : "bg-white dark:bg-[#090D16]"
                   }`}
                   style={{
                     height: TOTAL_HEIGHT,
-                    backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 63px, #e5e7eb 63px, #e5e7eb 64px)",
                   }}
                 >
                   {dayEvents.map((event) => {
@@ -170,7 +169,7 @@ export function CalendarTimeline({
                         type="button"
                         onClick={() => onEventClick(event)}
                         aria-label={`${event.title}, ${event.organizationName}, ${event.startTime} sampai ${event.endTime} WIB`}
-                        className={`absolute z-10 left-1 right-1 overflow-hidden rounded-md border p-2 text-left shadow-[0_1px_1px_rgba(15,23,42,0.05)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${event.borderClass} ${event.bgClass} ${event.textClass}`}
+                        className={`absolute z-10 left-1 right-1 overflow-hidden rounded-md border p-2 text-left shadow-[0_1px_1px_rgba(15,23,42,0.05)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer ${event.borderClass} ${event.bgClass} ${event.textClass}`}
                         style={{ top: position.top + 2, height: Math.max(position.height - 4, 32) }}
                       >
                         <span className="block truncate text-[11px] font-semibold leading-tight">
@@ -192,15 +191,15 @@ export function CalendarTimeline({
         </div>
       </div>
 
-      <footer className="flex shrink-0 items-center justify-between border-t border-gray-100 bg-white px-4 py-2 text-xs text-gray-500">
-        <span>
+      <footer className="flex shrink-0 items-center justify-between border-t border-gray-100 dark:border-[#1E293B] bg-white dark:bg-[#0F172A] px-4 py-2 text-xs text-gray-500 dark:text-[#94A3B8] transition-colors">
+        <span className="text-gray-600 dark:text-[#CBD5E1]">
           {filteredEvents.length > 0
             ? `${filteredEvents.length} jadwal ditampilkan`
             : isWeek
               ? "Tidak ada jadwal pada minggu ini"
               : "Tidak ada jadwal pada tanggal ini"}
         </span>
-        <span>{isWeek ? "Tampilan mingguan" : formatDate(dates[0])}</span>
+        <span className="text-gray-400 dark:text-[#64748B]">{isWeek ? "Tampilan mingguan" : formatDate(dates[0])}</span>
       </footer>
     </div>
   );

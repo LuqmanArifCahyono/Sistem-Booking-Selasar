@@ -15,10 +15,10 @@ export function OrganizationFilter({
   return (
     <div className="w-full">
       <div className="mb-2">
-        <h3 className="text-[11px] font-semibold text-gray-700 tracking-wider uppercase">
+        <h3 className="text-[11px] font-semibold text-gray-700 dark:text-[#CBD5E1] tracking-wider uppercase">
           Penyelenggara Event
         </h3>
-        <p className="text-xs text-gray-500 mt-0.5">
+        <p className="text-xs text-gray-500 dark:text-[#94A3B8] mt-0.5">
           Pilih yang tampil di kalender
         </p>
       </div>
@@ -27,7 +27,7 @@ export function OrganizationFilter({
         {organizations.map((org) => (
           <label
             key={org.id}
-            className="flex items-center gap-2.5 text-xs text-gray-800 cursor-pointer select-none group"
+            className="flex items-center gap-2.5 text-xs text-gray-800 dark:text-[#CBD5E1] cursor-pointer select-none group"
           >
             <input
               type="checkbox"
@@ -39,7 +39,7 @@ export function OrganizationFilter({
               className={`w-4 h-4 rounded flex items-center justify-center transition-all border ${
                 org.checked
                   ? "border-transparent"
-                  : "border-gray-300 bg-white group-hover:border-gray-400"
+                  : "border-gray-300 dark:border-slate-600 bg-white dark:bg-[#1E293B] group-hover:border-gray-400 dark:group-hover:border-slate-400"
               }`}
               style={{
                 backgroundColor: org.checked ? org.colorHex : "transparent",
@@ -61,7 +61,7 @@ export function OrganizationFilter({
                 </svg>
               )}
             </span>
-            <span className="font-medium group-hover:text-gray-900 transition-colors">
+            <span className="font-medium group-hover:text-gray-900 dark:group-hover:text-[#F8FAFC] transition-colors">
               {org.name}
             </span>
           </label>
