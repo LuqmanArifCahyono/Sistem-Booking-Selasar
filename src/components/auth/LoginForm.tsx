@@ -1,4 +1,4 @@
-// [FRONTEND CHANGE START: Integrasi Modal Lupa Kata Sandi - Milestone 3]
+// [FRONTEND CHANGE START: Form Login Akun Organisasi dengan Biru Soft di Dark Mode - Milestone 1 Revisi 4]
 "use client";
 
 import React, { useState } from "react";
@@ -64,23 +64,23 @@ export function LoginForm() {
 
   return (
     <>
-      <div className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-5 sm:p-6 lg:p-7 shadow-xs">
-        {/* Category Eyebrow */}
-        <span className="text-xs font-semibold text-[#2563EB] tracking-wider uppercase">
+      <div className="w-full bg-[#FFFFFF] dark:bg-[#111827] border border-[#E2E8F0] dark:border-[#1E293B] rounded-2xl p-5 sm:p-6 lg:p-7 shadow-xs transition-colors">
+        {/* Category Eyebrow dengan Biru Soft di Dark Mode */}
+        <span className="text-xs font-semibold text-[#2563EB] dark:text-[#93C5FD] tracking-wider uppercase">
           Portal Akses Organisasi Kemahasiswaan
         </span>
 
         {/* Main Heading & Subtitle */}
-        <h1 className="text-xl sm:text-2xl font-bold text-[#0F172B] mt-1">
+        <h1 className="text-xl sm:text-2xl font-bold text-[#0F172B] dark:text-[#F8FAFC] mt-1">
           Masuk Akun Organisasi
         </h1>
-        <p className="text-xs sm:text-sm text-[#62748E] mt-1 leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#62748E] dark:text-[#94A3B8] mt-1 leading-relaxed">
           Gunakan Username Akun atau Email Kampus yang telah terdaftar.
         </p>
 
-        {/* Quick Account Fill Chips dengan Warna 2563EB & Hover Effect */}
-        <div className="mt-4 pt-3 border-t border-[#E2E8F0]/70">
-          <span className="text-xs font-medium text-[#62748E] block mb-2">
+        {/* Quick Account Fill Chips dengan Biru Soft di Dark Mode */}
+        <div className="mt-4 pt-3 border-t border-[#E2E8F0]/70 dark:border-[#1E293B]">
+          <span className="text-xs font-medium text-[#62748E] dark:text-[#94A3B8] block mb-2">
             Isi cepat akun:
           </span>
           <div className="flex flex-wrap items-center gap-1.5">
@@ -89,7 +89,7 @@ export function LoginForm() {
                 key={acc.id}
                 type="button"
                 onClick={() => handleQuickFill(acc.id)}
-                className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#2563EB]/40 bg-[#2563EB]/5 text-[#2563EB] hover:bg-[#2563EB] hover:text-white hover:border-[#2563EB] hover:shadow-xs transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+                className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#2563EB]/40 dark:border-[#93C5FD]/30 bg-[#2563EB]/5 dark:bg-[#93C5FD]/10 text-[#2563EB] dark:text-[#93C5FD] hover:bg-[#2563EB] dark:hover:bg-[#2563EB] hover:text-white dark:hover:text-white hover:border-[#2563EB] hover:shadow-xs transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
               >
                 {acc.name}
               </button>
@@ -103,7 +103,7 @@ export function LoginForm() {
           <div>
             <label
               htmlFor="identifier"
-              className="block text-xs font-semibold text-[#314158] mb-1.5"
+              className="block text-xs font-semibold text-[#314158] dark:text-[#CBD5E1] mb-1.5"
             >
               Username Akun atau Email Kampus
             </label>
@@ -117,7 +117,7 @@ export function LoginForm() {
               }}
               placeholder="Contoh: @robotika_upn atau robotika_upn@student.kampus.ac.id"
               aria-invalid={validationError ? "true" : "false"}
-              className="w-full px-3.5 py-2.5 text-xs sm:text-sm text-[#0F172B] placeholder:text-[#62748E]/70 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-colors"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm text-[#0F172B] dark:text-[#F8FAFC] placeholder:text-[#62748E]/70 dark:placeholder:text-[#64748B] bg-[#FFFFFF] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] rounded-xl focus:outline-none focus:border-[#2563EB] dark:focus:border-[#93C5FD] focus:ring-1 focus:ring-[#2563EB] dark:focus:ring-[#93C5FD] transition-colors"
             />
           </div>
 
@@ -125,7 +125,7 @@ export function LoginForm() {
           <div>
             <label
               htmlFor="password"
-              className="block text-xs font-semibold text-[#314158] mb-1.5"
+              className="block text-xs font-semibold text-[#314158] dark:text-[#CBD5E1] mb-1.5"
             >
               Kata Sandi
             </label>
@@ -140,13 +140,13 @@ export function LoginForm() {
                 }}
                 placeholder="Masukkan kata sandi"
                 aria-invalid={validationError ? "true" : "false"}
-                className="w-full px-3.5 py-2.5 pr-10 text-xs sm:text-sm text-[#0F172B] placeholder:text-[#62748E]/70 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-colors"
+                className="w-full px-3.5 py-2.5 pr-10 text-xs sm:text-sm text-[#0F172B] dark:text-[#F8FAFC] placeholder:text-[#62748E]/70 dark:placeholder:text-[#64748B] bg-[#FFFFFF] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#334155] rounded-xl focus:outline-none focus:border-[#2563EB] dark:focus:border-[#93C5FD] focus:ring-1 focus:ring-[#2563EB] dark:focus:ring-[#93C5FD] transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-[#62748E] hover:text-[#2563EB] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded-md transition-colors"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 text-[#62748E] dark:text-[#94A3B8] hover:text-[#2563EB] dark:hover:text-[#93C5FD] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] rounded-md transition-colors"
               >
                 {showPassword ? (
                   <svg
@@ -160,7 +160,7 @@ export function LoginForm() {
                       strokeLinejoin="round"
                       strokeWidth={2}
                       d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
-                  />
+                    />
                   </svg>
                 ) : (
                   <svg
@@ -187,14 +187,14 @@ export function LoginForm() {
             </div>
           </div>
 
-          {/* Remember Session with Cursor Pointer & Forgot Password Modal Trigger */}
+          {/* Remember Session & Forgot Password Trigger */}
           <div className="flex items-center justify-between text-xs pt-0.5">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-[#314158] hover:text-[#0F172B]">
+            <label className="flex items-center gap-2 cursor-pointer select-none text-[#314158] dark:text-[#CBD5E1] hover:text-[#0F172B] dark:hover:text-[#F8FAFC]">
               <input
                 type="checkbox"
                 checked={rememberSession}
                 onChange={(e) => setRememberSession(e.target.checked)}
-                className="w-4 h-4 rounded border-[#CAD5E2] text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
+                className="w-4 h-4 rounded border-[#CAD5E2] dark:border-[#334155] bg-white dark:bg-[#0F172A] text-[#2563EB] focus:ring-[#2563EB] cursor-pointer"
               />
               <span>Ingat sesi saya</span>
             </label>
@@ -202,7 +202,7 @@ export function LoginForm() {
             <button
               type="button"
               onClick={() => setIsForgotModalOpen(true)}
-              className="font-medium text-[#2563EB] hover:text-[#1D4ED8] transition-colors focus-visible:outline-none focus-visible:underline cursor-pointer"
+              className="font-medium text-[#2563EB] dark:text-[#93C5FD] hover:text-[#1D4ED8] dark:hover:text-[#BFDBFE] transition-colors focus-visible:outline-none focus-visible:underline cursor-pointer"
             >
               Lupa kata sandi?
             </button>
@@ -212,10 +212,10 @@ export function LoginForm() {
           {validationError && (
             <div
               role="alert"
-              className="flex items-start gap-2 p-3 text-xs rounded-xl bg-[#BB4D00]/10 border border-[#BB4D00]/30 text-[#BB4D00] animate-in fade-in duration-200"
+              className="flex items-start gap-2 p-3 text-xs rounded-xl bg-[#BB4D00]/10 dark:bg-[#FE9A00]/15 border border-[#BB4D00]/30 dark:border-[#FE9A00]/30 text-[#BB4D00] dark:text-[#FE9A00] animate-in fade-in duration-200"
             >
               <svg
-                className="w-4 h-4 text-[#BB4D00] shrink-0 mt-0.5"
+                className="w-4 h-4 text-[#BB4D00] dark:text-[#FE9A00] shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -235,10 +235,10 @@ export function LoginForm() {
           {successInfo && (
             <div
               role="status"
-              className="flex items-start gap-2 p-3 text-xs rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 animate-in fade-in duration-200"
+              className="flex items-start gap-2 p-3 text-xs rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 animate-in fade-in duration-200"
             >
               <svg
-                className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+                className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -251,15 +251,15 @@ export function LoginForm() {
                 />
               </svg>
               <div>
-                <p className="font-semibold text-emerald-900">{successInfo}</p>
-                <p className="text-[11px] text-emerald-700 mt-0.5">
+                <p className="font-semibold text-emerald-900 dark:text-emerald-200">{successInfo}</p>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
                   Sesi terverifikasi sebagai {identifier}.
                 </p>
               </div>
             </div>
           )}
 
-          {/* Primary Submit Button dengan Warna #2563EB, Hover Effect, dan Cursor Pointer */}
+          {/* Primary Submit Button: Tetap Biru Solid Sesuai Ketentuan (Selain Button) */}
           <div className="pt-2">
             <button
               type="submit"
@@ -298,13 +298,13 @@ export function LoginForm() {
             </button>
           </div>
 
-          {/* Register / Sign Up Navigation Link */}
-          <div className="text-center pt-3 border-t border-[#E2E8F0]/70">
-            <p className="text-xs text-[#62748E]">
+          {/* Register Navigation Link dengan Biru Soft di Dark Mode */}
+          <div className="text-center pt-3 border-t border-[#E2E8F0]/70 dark:border-[#1E293B]">
+            <p className="text-xs text-[#62748E] dark:text-[#94A3B8]">
               Organisasi Anda belum terdaftar?{" "}
               <Link
                 href="/register"
-                className="font-semibold text-[#2563EB] hover:text-[#1D4ED8] transition-colors focus-visible:outline-none focus-visible:underline cursor-pointer"
+                className="font-semibold text-[#2563EB] dark:text-[#93C5FD] hover:text-[#1D4ED8] dark:hover:text-[#BFDBFE] transition-colors focus-visible:outline-none focus-visible:underline cursor-pointer"
               >
                 Buat Akun Organisasi
               </Link>
@@ -322,4 +322,4 @@ export function LoginForm() {
     </>
   );
 }
-// [FRONTEND CHANGE END: Integrasi Modal Lupa Kata Sandi - Milestone 3]
+// [FRONTEND CHANGE END: Form Login Akun Organisasi dengan Biru Soft di Dark Mode - Milestone 1 Revisi 4]
