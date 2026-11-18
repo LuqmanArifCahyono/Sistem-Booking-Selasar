@@ -1,4 +1,4 @@
-// [FRONTEND CHANGE START: Visual Timeline Bar & Ringkasan Ketersediaan Selasar - Milestone 1 Revisi 6]
+// [FRONTEND CHANGE START: Icon Jam Gelap, Aksen Warna pada Waktu & Keterangan Netral Gelap - Milestone 1 Revisi 9]
 "use client";
 
 import React, { useState, useRef } from "react";
@@ -55,12 +55,12 @@ export function LoginSchedulePreview() {
   const isHariIni = selectedDateIso === DEFAULT_TODAY_ISO;
   const isBesok = selectedDateIso === DEFAULT_TOMORROW_ISO;
 
-  // Mengambil jadwal yang sesuai dengan tanggal terpilih secara dinamis (Hanya jam terisi)
+  // Mengambil jadwal yang sesuai dengan tanggal terpilih secara dinamis
   const schedule = getScheduleByDate(selectedDateIso);
   const hasAgendas = schedule.occupiedAgendas.length > 0;
 
-  // --- LOGIKA PERHITUNGAN TIMELINE BAR & RINGKASAN KETERSEDIAAN ---
-  // Rentang jam operasional: 08:00 (480 menit) s.d. 18:00 (1080 menit) = 600 menit total
+  // --- LOGIKA PERHITUNGAN TIMELINE BAR & SLOT WAKTU KOSONG / TERISI ---
+  // Rentang jam operasional selasar: 08:00 (480 menit) s.d. 18:00 (1080 menit) = 600 menit total
   const DAY_START_MIN = 8 * 60; // 480
   const DAY_END_MIN = 18 * 60; // 1080
   const TOTAL_DAY_MIN = DAY_END_MIN - DAY_START_MIN; // 600
@@ -77,9 +77,17 @@ export function LoginSchedulePreview() {
     return 0;
   };
 
-  // Helper format durasi menit menjadi jam (misal: "2.5 Jam" atau "5 Jam")
-  const formatMinutesToHours = (minutes: number): string => {
-    if (minutes <= 0) return "0 Jam";
+  // Helper memformat menit ke string jam "HH:MM"
+  const formatMinutesToTimeStr = (m: number): string => {
+    const h = Math.floor(m / 60);
+    const min = m % 60;
+    return `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
+  };
+
+  // Helper format durasi ramah pembacaan kampus (misal: "30 Menit", "1.5 Jam", "2 Jam")
+  const formatMinutesFriendly = (minutes: number): string => {
+    if (minutes <= 0) return "0 Menit";
+    if (minutes < 60) return `${minutes} Menit`;
     const hours = minutes / 60;
     return hours % 1 === 0 ? `${hours} Jam` : `${hours.toFixed(1)} Jam`;
   };
@@ -104,85 +112,75 @@ export function LoginSchedulePreview() {
     };
   });
 
-  // Total durasi waktu terisi dalam menit & jam
+  // Total durasi waktu terisi dalam menit & string jam
   const totalOccupiedMinutes = timelineSegments.reduce((acc, seg) => acc + seg.duration, 0);
-  const formattedOccupiedHours = formatMinutesToHours(totalOccupiedMinutes);
+  const formattedOccupiedHours = formatMinutesFriendly(totalOccupiedMinutes);
 
-  // Menghitung slot waktu bebas terbaik (gap bebas terbesar di antara 08:00 - 18:00)
-  const calculateBestFreeSlot = () => {
+  // Menghitung seluruh slot waktu kosong (tersedia) di antara 08:00 - 18:00
+  const calculateFreeSlots = () => {
     if (timelineSegments.length === 0) {
-      return {
-        time: "Sepanjang Hari",
-        subtext: "10 Jam Bebas (08:00–18:00)",
-        label: "Sepanjang hari bebas tanpa agenda terisi",
-      };
+      return [
+        {
+          time: "08:00–18:00",
+          durationMin: TOTAL_DAY_MIN,
+          durationLabel: "10 Jam Bebas",
+          subtext: "Sepanjang Hari Bebas",
+        },
+      ];
     }
 
     const sorted = [...timelineSegments].sort((a, b) => a.startMin - b.startMin);
-    let maxGap = 0;
-    let gapStart = DAY_START_MIN;
-    let gapEnd = DAY_START_MIN;
+    const slots: Array<{
+      time: string;
+      durationMin: number;
+      durationLabel: string;
+      subtext: string;
+    }> = [];
 
-    // Cek jeda sebelum agenda pertama (08:00 s.d. agenda pertama)
+    // 1. Cek slot bebas sebelum agenda pertama (08:00 s.d. agenda pertama)
     if (sorted[0].startMin > DAY_START_MIN) {
-      const gap = sorted[0].startMin - DAY_START_MIN;
-      if (gap > maxGap) {
-        maxGap = gap;
-        gapStart = DAY_START_MIN;
-        gapEnd = sorted[0].startMin;
-      }
+      const dur = sorted[0].startMin - DAY_START_MIN;
+      slots.push({
+        time: `${formatMinutesToTimeStr(DAY_START_MIN)}–${formatMinutesToTimeStr(sorted[0].startMin)}`,
+        durationMin: dur,
+        durationLabel: formatMinutesFriendly(dur),
+        subtext: "Pagi Hari",
+      });
     }
 
-    // Cek jeda antar agenda
+    // 2. Cek slot bebas di antara agenda-agenda yang ada
     for (let i = 0; i < sorted.length - 1; i++) {
       const currentEnd = sorted[i].endMin;
       const nextStart = sorted[i + 1].startMin;
       if (nextStart > currentEnd) {
-        const gap = nextStart - currentEnd;
-        if (gap > maxGap) {
-          maxGap = gap;
-          gapStart = currentEnd;
-          gapEnd = nextStart;
-        }
+        const dur = nextStart - currentEnd;
+        slots.push({
+          time: `${formatMinutesToTimeStr(currentEnd)}–${formatMinutesToTimeStr(nextStart)}`,
+          durationMin: dur,
+          durationLabel: formatMinutesFriendly(dur),
+          subtext: "Sela Agenda",
+        });
       }
     }
 
-    // Cek jeda setelah agenda terakhir hingga jam operasional tutup (18:00)
+    // 3. Cek slot bebas setelah agenda terakhir hingga jam tutup operasional (18:00)
     const lastEnd = sorted[sorted.length - 1].endMin;
     if (lastEnd < DAY_END_MIN) {
-      const gap = DAY_END_MIN - lastEnd;
-      if (gap > maxGap) {
-        maxGap = gap;
-        gapStart = lastEnd;
-        gapEnd = DAY_END_MIN;
-      }
+      const dur = DAY_END_MIN - lastEnd;
+      slots.push({
+        time: `${formatMinutesToTimeStr(lastEnd)}–${formatMinutesToTimeStr(DAY_END_MIN)}`,
+        durationMin: dur,
+        durationLabel: formatMinutesFriendly(dur),
+        subtext: "Sore Hari",
+      });
     }
 
-    if (maxGap <= 0) {
-      return {
-        time: "Jadwal Penuh",
-        subtext: "Cek tanggal lain",
-        label: "Seluruh jam operasional terisi",
-      };
-    }
-
-    const formatMin = (m: number) => {
-      const h = Math.floor(m / 60);
-      const min = m % 60;
-      return `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
-    };
-
-    const timeStr = `${formatMin(gapStart)}–${formatMin(gapEnd)}`;
-    const gapHours = formatMinutesToHours(maxGap);
-
-    return {
-      time: timeStr,
-      subtext: `${gapHours} bebas tersedia`,
-      label: `Waktu bebas terbaik: ${timeStr} (${gapHours})`,
-    };
+    return slots;
   };
 
-  const bestFreeSlot = calculateBestFreeSlot();
+  const freeSlots = calculateFreeSlots();
+  const totalFreeMinutes = freeSlots.reduce((acc, s) => acc + s.durationMin, 0);
+  const formattedFreeHours = formatMinutesFriendly(totalFreeMinutes);
 
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -209,7 +207,7 @@ export function LoginSchedulePreview() {
                 </svg>
               </div>
               <h2 className="text-base sm:text-lg font-bold text-[#0F172B] dark:text-[#F8FAFC]">
-                Pratinjau Jam Terisi Selasar
+                Pratinjau Ketersediaan Selasar
               </h2>
             </div>
             <div className="flex items-center gap-2 mt-1.5 ml-0.5">
@@ -219,9 +217,9 @@ export function LoginSchedulePreview() {
               </span>
               <p className="text-xs text-[#62748E] dark:text-[#94A3B8]">
                 {hasAgendas
-                  ? `Pembaruan otomatis · Menampilkan ${schedule.occupiedAgendas.length} agenda terisi ${isHariIni ? "hari ini" : isBesok ? "besok" : `(${schedule.dayLabel})`
+                  ? `Pembaruan otomatis · ${freeSlots.length} slot kosong & ${schedule.occupiedAgendas.length} agenda terisi ${isHariIni ? "hari ini" : isBesok ? "besok" : `(${schedule.dayLabel})`
                   }`
-                  : `Pembaruan otomatis · Tidak ada agenda terisi (${schedule.dayLabel}) · Selasar Bebas`}
+                  : `Pembaruan otomatis · Selasar 100% bebas sepanjang hari (${schedule.dayLabel})`}
               </p>
             </div>
           </div>
@@ -232,8 +230,8 @@ export function LoginSchedulePreview() {
               type="button"
               onClick={() => setSelectedDateIso(DEFAULT_TODAY_ISO)}
               className={`px-3 py-1.5 text-xs rounded-md transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${isHariIni
-                ? "bg-[#FFFFFF] dark:bg-[#1E293B] text-[#2563EB] dark:text-[#93C5FD] shadow-xs font-semibold"
-                : "text-[#62748E] dark:text-[#94A3B8] hover:text-[#0F172B] dark:hover:text-[#F8FAFC] font-medium"
+                  ? "bg-[#FFFFFF] dark:bg-[#1E293B] text-[#2563EB] dark:text-[#93C5FD] shadow-xs font-semibold"
+                  : "text-[#62748E] dark:text-[#94A3B8] hover:text-[#0F172B] dark:hover:text-[#F8FAFC] font-medium"
                 }`}
               aria-pressed={isHariIni}
             >
@@ -243,8 +241,8 @@ export function LoginSchedulePreview() {
               type="button"
               onClick={() => setSelectedDateIso(DEFAULT_TOMORROW_ISO)}
               className={`px-3 py-1.5 text-xs rounded-md transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${isBesok
-                ? "bg-[#FFFFFF] dark:bg-[#1E293B] text-[#2563EB] dark:text-[#93C5FD] shadow-xs font-semibold"
-                : "text-[#62748E] dark:text-[#94A3B8] hover:text-[#0F172B] dark:hover:text-[#F8FAFC] font-medium"
+                  ? "bg-[#FFFFFF] dark:bg-[#1E293B] text-[#2563EB] dark:text-[#93C5FD] shadow-xs font-semibold"
+                  : "text-[#62748E] dark:text-[#94A3B8] hover:text-[#0F172B] dark:hover:text-[#F8FAFC] font-medium"
                 }`}
               aria-pressed={isBesok}
             >
@@ -258,6 +256,9 @@ export function LoginSchedulePreview() {
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-[#62748E] dark:text-[#94A3B8] uppercase tracking-wide">
               Jadwal Tanggal
+            </span>
+            <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8]/80 font-normal hidden sm:inline">
+              (Klik tanggal untuk pilih kalender)
             </span>
           </div>
 
@@ -331,7 +332,7 @@ export function LoginSchedulePreview() {
               {hasAgendas ? `${schedule.occupiedAgendas.length} Kegiatan` : "0 Kegiatan"}
             </span>
             <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8] mt-0.5 truncate">
-              {hasAgendas ? "Terjadwal di selasar" : "Selasar bebas"}
+              {hasAgendas ? "Terjadwal di selasar" : "Selasar kosong"}
             </span>
           </div>
 
@@ -348,46 +349,44 @@ export function LoginSchedulePreview() {
             </span>
           </div>
 
-          {/* Stat 3: Slot Bebas Ideal */}
+          {/* Stat 3: Total Waktu Tersedia (Kosong) */}
           <div className="flex flex-col p-2.5 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#1E293B] transition-colors">
             <span className="text-[10px] font-semibold text-[#62748E] dark:text-[#94A3B8] uppercase tracking-wider">
-              Slot Bebas Ideal
+              Waktu Tersedia
             </span>
-            <span
-              className="text-xs sm:text-sm font-bold text-[#008A5B] dark:text-[#00E599] mt-0.5 truncate"
-              title={bestFreeSlot.label}
-            >
-              {bestFreeSlot.time}
+            <span className="text-sm sm:text-base font-bold text-[#008A5B] dark:text-[#00E599] mt-0.5">
+              {formattedFreeHours}
             </span>
             <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8] mt-0.5 truncate">
-              {bestFreeSlot.subtext}
+              {freeSlots.length > 0 ? `${freeSlots.length} slot kosong bebas` : "Jadwal penuh"}
             </span>
           </div>
         </div>
 
-        {/* KONDISI 1: JIKA ADA KEGIATAN TERISI */}
-        {hasAgendas ? (
-          <>
-            {/* Header Rincian Agenda Terisi */}
-            <div className="flex items-center justify-between pt-3 pb-1">
-              <span className="text-xs font-semibold text-[#62748E] dark:text-[#94A3B8]">
-                Daftar Rincian Kegiatan:
-              </span>
-              <span className="text-[11px] text-[#62748E] dark:text-[#94A3B8]/80">
-                {schedule.occupiedAgendas.length} slot terisi
-              </span>
+        {/* 3. BAGIAN ATAS: DAFTAR SLOT WAKTU KOSONG (TERSEDIA) */}
+        <div className="pt-3 pb-3">
+          <div className="flex items-center justify-between pb-1.5">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#00BC7D]" />
+              <h3 className="text-xs font-bold text-[#0F172B] dark:text-[#F8FAFC]">
+                Slot Waktu Kosong (Tersedia):
+              </h3>
             </div>
+            <span className="text-[11px] text-[#008A5B] dark:text-[#00E599] font-semibold">
+              {freeSlots.length} slot bebas diajukan
+            </span>
+          </div>
 
-            {/* Detailed Agenda Items List: Bersih tanpa border/kotak di semua mode, memanjang ke bawah secara dinamis */}
+          {freeSlots.length > 0 ? (
             <div className="my-1 space-y-1">
-              {schedule.occupiedAgendas.map((agenda, index) => (
+              {freeSlots.map((slot, index) => (
                 <div
-                  key={`${selectedDateIso}-agenda-${index}`}
-                  className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-[#F1F5F9]/70 dark:hover:bg-[#1E293B]/40 transition-colors"
+                  key={`free-slot-${index}`}
+                  className="flex items-center justify-between gap-3 py-2 px-2.5 rounded-lg hover:bg-[#F8FAFC] dark:hover:bg-[#1E293B]/40 transition-colors"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    {/* Waktu Kegiatan dengan Icon Jam (Teks Netral Bersih Tanpa Aksen Biru) */}
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-[#0F172B] dark:text-[#F8FAFC] whitespace-nowrap shrink-0">
+                    {/* Icon Jam Gelap & Waktu Kosong (Warna Hijau) */}
+                    <div className="flex items-center gap-1.5 text-xs whitespace-nowrap shrink-0">
                       <svg
                         className="w-3.5 h-3.5 text-[#62748E] dark:text-[#94A3B8]"
                         fill="none"
@@ -402,16 +401,82 @@ export function LoginSchedulePreview() {
                           d="M12 6v6l3 2"
                         />
                       </svg>
-                      <span>{agenda.time}</span>
+                      <span className="font-bold text-[#008A5B] dark:text-[#00E599]">
+                        {slot.time}
+                      </span>
                     </div>
 
-                    {/* Judul Kegiatan Ormawa */}
+                    {/* Deskripsi Slot Waktu Bebas (Tetap Gelap/Netral) */}
+                    <p className="text-xs text-[#314158] dark:text-[#CBD5E1] truncate font-normal">
+                      Waktu Bebas Selasar — {slot.durationLabel} ({slot.subtext})
+                    </p>
+                  </div>
+
+                  {/* Badge Status Tersedia Hijau Emerald */}
+                  <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#00BC7D]/10 dark:bg-[#00BC7D]/15 border border-[#00BC7D]/30 text-[#008A5B] dark:text-[#00E599]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00BC7D] shrink-0" />
+                    <span className="text-[11px] font-bold">Tersedia</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-2.5 px-3 rounded-lg bg-[#F8FAFC] dark:bg-[#0F172A] text-xs text-[#62748E] dark:text-[#94A3B8]">
+              Tidak ada slot kosong yang tersedia pada rentang 08:00–18:00.
+            </div>
+          )}
+        </div>
+
+        {/* 4. BAGIAN BAWAH: DAFTAR RINCIAN KEGIATAN (TERISI) */}
+        <div className="pt-3 border-t border-[#E2E8F0]/70 dark:border-[#1E293B]">
+          <div className="flex items-center justify-between pb-1.5">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#FE9A00]" />
+              <h3 className="text-xs font-bold text-[#0F172B] dark:text-[#F8FAFC]">
+                Daftar Rincian Kegiatan (Terisi):
+              </h3>
+            </div>
+            <span className="text-[11px] text-[#BB4D00] dark:text-[#FE9A00] font-semibold">
+              {schedule.occupiedAgendas.length} slot terisi
+            </span>
+          </div>
+
+          {hasAgendas ? (
+            <div className="my-1 space-y-1">
+              {schedule.occupiedAgendas.map((agenda, index) => (
+                <div
+                  key={`${selectedDateIso}-agenda-${index}`}
+                  className="flex items-center justify-between gap-3 py-2 px-2.5 rounded-lg hover:bg-[#F1F5F9]/70 dark:hover:bg-[#1E293B]/40 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {/* Icon Jam Gelap & Waktu Kegiatan (Warna Kuning/Amber) */}
+                    <div className="flex items-center gap-1.5 text-xs whitespace-nowrap shrink-0">
+                      <svg
+                        className="w-3.5 h-3.5 text-[#62748E] dark:text-[#94A3B8]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6l3 2"
+                        />
+                      </svg>
+                      <span className="font-bold text-[#BB4D00] dark:text-[#FE9A00]">
+                        {agenda.time}
+                      </span>
+                    </div>
+
+                    {/* Judul Kegiatan Ormawa (Tetap Gelap/Netral) */}
                     <p className="text-xs text-[#314158] dark:text-[#CBD5E1] truncate font-normal">
                       {agenda.agendaTitle}
                     </p>
                   </div>
 
-                  {/* Badge Penanda Terisi Kuning / Amber (Tetap Ada di Semua Theme) */}
+                  {/* Badge Penanda Terisi Kuning / Amber */}
                   <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FE9A00]/10 dark:bg-[#FE9A00]/15 border border-[#FE9A00]/30 text-[#BB4D00] dark:text-[#FE9A00]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#FE9A00] shrink-0" />
                     <span className="text-[11px] font-bold">Terisi</span>
@@ -419,66 +484,13 @@ export function LoginSchedulePreview() {
                 </div>
               ))}
             </div>
-
-            {/* UI LAIN PENGGANTI BAGIAN KOSONG: Banner Edukasi Ketersediaan Jam Bebas */}
-            <div className="mt-3 p-3 rounded-xl border border-[#00BC7D]/30 dark:border-[#00BC7D]/40 bg-[#00BC7D]/5 dark:bg-[#00BC7D]/10 flex items-start gap-2.5 transition-colors">
-              <svg
-                className="w-4 h-4 text-[#00BC7D] shrink-0 mt-0.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div className="text-xs">
-                <span className="font-bold text-[#008A5B] dark:text-[#00E599]">
-                  Sisa Jam Lainnya Kosong:
-                </span>
-                <span className="text-[#314158] dark:text-[#CBD5E1] ml-1">
-                  Di luar jam terisi di atas, seluruh waktu selasar pada tanggal ini bebas dan dapat diajukan oleh ormawa Anda.
-                </span>
-              </div>
+          ) : (
+            <div className="py-2.5 px-3 rounded-lg bg-[#00BC7D]/5 dark:bg-[#00BC7D]/10 text-xs text-[#008A5B] dark:text-[#00E599] flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#00BC7D]" />
+              <span>Tidak ada kegiatan terjadwal pada tanggal ini. Seluruh jam kegiatan bebas dan dapat diajukan.</span>
             </div>
-          </>
-        ) : (
-          /* KONDISI 2: JIKA TIDAK ADA KEGIATAN SAMA SEKALI -> Ganti dengan UI Khusus Bebas Selasar */
-          <div className="my-4 p-6 rounded-xl border border-[#00BC7D]/30 dark:border-[#00BC7D]/40 bg-[#00BC7D]/5 dark:bg-[#00BC7D]/10 flex flex-col items-center justify-center text-center gap-2.5 transition-colors">
-            <div className="w-11 h-11 rounded-full bg-[#00BC7D]/15 dark:bg-[#00BC7D]/25 border border-[#00BC7D]/30 flex items-center justify-center text-[#00BC7D]">
-              <svg
-                className="w-6 h-6 text-[#00BC7D]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-[#0F172B] dark:text-[#F8FAFC]">
-                Selasar Kosong Sepanjang Hari
-              </h3>
-              <p className="text-xs text-[#62748E] dark:text-[#94A3B8] mt-1 max-w-md">
-                Tidak ada agenda pemakaian selasar yang terdaftar pada {schedule.dateFormatted}. Seluruh jam kegiatan bebas dan terbuka untuk pengajuan baru ormawa Anda.
-              </p>
-            </div>
-            <div className="mt-1">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#00BC7D]/15 dark:bg-[#00BC7D]/25 text-[#008A5B] dark:text-[#00E599] border border-[#00BC7D]/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00BC7D] animate-ping" />
-                100% Waktu Tersedia untuk Diajukan
-              </span>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Three Key System Features: Dropdown Accordion + Biru Soft di Dark Mode */}
@@ -547,4 +559,4 @@ export function LoginSchedulePreview() {
     </div>
   );
 }
-// [FRONTEND CHANGE END: Visual Timeline Bar & Ringkasan Ketersediaan Selasar - Milestone 1 Revisi 6]
+// [FRONTEND CHANGE END: Icon Jam Gelap, Aksen Warna pada Waktu & Keterangan Netral Gelap - Milestone 1 Revisi 9]

@@ -4,6 +4,35 @@ Dokumentasi riwayat pengembangan antarmuka (frontend only) untuk sistem peminjam
 
 ---
 
+## [Milestone 1 — Icon Jam Gelap, Aksen Warna pada Waktu & Keterangan Netral Gelap]
+**Tanggal:** 18 November 2026  
+**Referensi:** Instruksi revisi pengguna untuk pewarnaan presisi pada elemen baris jadwal:
+1. **Ikon Jam Tetap Gelap Netral:**
+   - Ikon jam (`svg`) pada bagian slot kosong maupun slot terisi diseragamkan menggunakan warna gelap netral (`text-[#62748E] dark:text-[#94A3B8]`).
+2. **Aksen Warna Hijau / Kuning Hanya pada Teks Waktu:**
+   - **Slot Kosong (Tersedia):** Hanya teks jam (misal: `08:00–08:30`) yang diberi warna hijau tegas (`text-[#008A5B] dark:text-[#00E599] font-bold`).
+   - **Slot Terisi Kegiatan:** Hanya teks jam (misal: `08:30–10:30`) yang diberi warna kuning/amber tegas (`text-[#BB4D00] dark:text-[#FE9A00] font-bold`).
+3. **Keterangan Kegiatan & Waktu Bebas Tetap Gelap Netral:**
+   - Deskripsi slot waktu bebas (`Waktu Bebas Selasar — 30 Menit`) maupun nama kegiatan ormawa (`BEM FISIP — Registrasi...`) tetap menggunakan teks netral gelap (`text-[#314158] dark:text-[#CBD5E1] font-normal`).
+   - Badge penanda status di sisi kanan tetap menggunakan aksen hijau `[ Tersedia ]` dan amber `[ Terisi ]` sebagai penegas status.
+
+---
+
+## [Milestone 1 — Pemisahan 2 Bagian: Slot Waktu Kosong (Tersedia) & Slot Terisi]
+**Tanggal:** 18 November 2026  
+**Referensi:** Restrukturisasi daftar rincian jadwal pada kartu kiri pratinjau selasar menjadi 2 bagian terdedikasi (atas: kosong, bawah: terisi):
+1. **Bagian Atas: Daftar Slot Waktu Kosong (Tersedia):**
+   - Menghitung seluruh celah jeda waktu bebas antara jam 08:00–18:00 secara dinamis.
+   - Menampilkan daftar baris borderless berisi jam kosong (misal: `08:00–08:30`, `10:30–11:00`, `12:30–13:00`, dll.) dengan ikon jam hijau, durasi waktu bebas, dan badge status hijau emerald `[ Tersedia ]`.
+   - Menghitung total akumulasi waktu tersedia (misal: `2.3 Jam` dari 5 slot kosong) yang juga disinkronkan ke pill statistik *Waktu Tersedia*.
+2. **Bagian Bawah: Daftar Rincian Kegiatan (Terisi):**
+   - Menampilkan daftar baris borderless berisi kegiatan terisi ormawa (misal: BEM FISIP, Himasifo, Komunitas Robotika, dll.) dengan ikon jam netral, nama ormawa/agenda, dan badge kuning/amber `[ Terisi ]`.
+3. **Penyelarasan Visual & Metrik:**
+   - Visual Timeline Bar (08:00–18:00) tetap aktif dengan track hijau (bebas) dan balok amber (terisi).
+   - Card metrik atas selaras sempurna: **Agenda Aktif** (jumlah kegiatan), **Waktu Terpakai** (jam terisi), dan **Waktu Tersedia** (jam kosong yang bebas diajukan ormawa).
+
+---
+
 ## [Milestone 1 — Penambahan 2 Kegiatan Tambahan Simulasi Visual Padat]
 **Tanggal:** 18 November 2026  
 **Referensi:** Penambahan 2 kegiatan pemakaian selasar pada jadwal default "Hari Ini" untuk menguji tampilan visual timeline bar dan pemanjangan daftar agenda ke bawah:
