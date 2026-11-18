@@ -4,6 +4,80 @@ Dokumentasi riwayat pengembangan antarmuka (frontend only) untuk sistem peminjam
 
 ---
 
+## [Sub-Admin Milestone 2 — Schedule Monitoring & Period Controls]
+**Tanggal:** 18 November 2026  
+**Referensi:** Dokumen `02 · SCHEDULE MONITORING/PERIOD CONTROLS.pdf` (Panel Sub-Admin SelasarSpace):
+1. **Navigasi Kalender Antarbulan (`AdminSidebar.tsx`):**
+   - Diimplementasikan navigasi dinamis antarbulan menggunakan tombol panah (`‹` dan `›`).
+   - Perhitungan matematis dinamis untuk label bulan/tahun, jumlah hari dalam bulan (`daysInMonth`), serta penyesuaian kolom hari `S S R K J S M` (offset hari pertama Senin = 0 s.d. Minggu = 6).
+   - Sinkronisasi otomatis tampilan kalender mini saat tanggal aktif berpindah lintas bulan.
+2. **Pemilihan Tanggal Aktif & Tombol "Hari ini":**
+   - Mengklik tanggal mana pun pada kalender mini memperbarui state tanggal aktif (`selectedDate`).
+   - Penyorotan visual tanggal aktif dengan lingkaran biru kontras (`bg-[#2563EB] text-white`).
+   - Indikator `"Tanggal aktif: DD/MM/YYYY"` di bawah kalender diperbarui secara dinamis via helper `formatDateDMY`.
+   - Tombol **"Hari ini"** dan ikon reload **`↻`** secara instan mereset kalender dan tanggal aktif ke hari ini (`12/11/2026`).
+3. **Pembaruan Tampilan Header & Linimasa Jadwal Berdasarkan Tanggal:**
+   - Teks tanggal pada [AdminHeader.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminHeader.tsx) berubah dinamis sesuai tanggal terpilih (contoh: *"Kamis, 12/11/2026"*, *"Jumat, 13/11/2026"*).
+   - Dibuat pemetaan jadwal multi-tanggal (`MULTI_DATE_SLOTS` dan fallback generator `getSlotsForDate` di [admin.ts](file:///d:/BDL/System-Booking-Selasar/src/constants/admin.ts)) sehingga setiap tanggal memiliki variasi slot dan status yang realistis.
+   - Ringkasan 4 kartu metrik statistik diperbarui secara reaktif menggunakan fungsi helper `calculateStatsForSlots`.
+   - Status perubahan slot (penguncian, penambahan manual, atau simulasi pelepasan/pembatalan) disimpan pada cache state lokal per tanggal (`modifiedSlotsByDate`).
+4. **Filter Penyelenggara Event Sinergis:**
+   - Checklist organisasi ormawa (`Himasifo`, `BEM FISIP`, `Himakom`, `Himatifa`) menyaring slot jadwal pada linimasa dan item pada log aktivitas secara bersamaan.
+   - Ditambahkan empty state ramah pengguna pada linimasa jika seluruh organisasi dinonaktifkan.
+5. **Modal Tambah Jadwal Manual Sesuai Tanggal Aktif:**
+   - [AdminManualBookingModal.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminManualBookingModal.tsx) kini secara otomatis mengisi atribut tanggal kegiatan mengikuti tanggal aktif yang sedang dibuka Sub-Admin.
+6. **Revisi Visual & Komponen Sesuai Instruksi Pengguna:**
+   - **Tombol Simulasi User Batal Dihapus:** Tombol simulasi pada header log aktivitas di [AdminActivityLog.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminActivityLog.tsx) telah dihilangkan sehingga tampilan log aktivitas lebih bersih dan sesuai dengan UI dokumen referensi.
+   - **Badge Dipesan Berwarna Hijau:** Menyeragamkan seluruh badge status `Dipesan` pada [AdminTimelineView.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminTimelineView.tsx) dan [AdminSlotDetailModal.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminSlotDetailModal.tsx) menjadi warna hijau emerald (`bg-emerald-100 text-emerald-800 border-emerald-300`).
+   - **Penghapusan Animasi Bentrok:** Efek animasi `animate-pulse` pada badge `Bentrok` di linimasa telah dihilangkan sehingga tampilan status bentrok bersifat statis dan elegan.
+
+---
+
+## [Sub-Admin Milestone 1 — Dashboard Overview & Activity Filters]
+**Tanggal:** 18 November 2026  
+**Referensi:** Dokumen `01 · DASHBOARD OVERVIEW & ACTIVITY FILTERS.pdf` (Panel Sub-Admin SelasarSpace):
+1. **Rute & Tata Letak Panel Sub-Admin (`/admin`):**
+   - Dibuat rute baru [page.tsx](file:///d:/BDL/System-Booking-Selasar/src/app/admin/page.tsx) khusus pengelola kampus (Panel Sub-Admin).
+   - Sidebar navigasi [AdminSidebar.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminSidebar.tsx) lengkap dengan:
+     - Branding `SelasarSpace` + badge `Panel Sub-Admin` dan subtitle `Sistem Peminjaman Tempat`.
+     - Menu navigasi `Monitor Jadwal & Slot` (aktif) dan `Monitoring Akun Organisasi (6)`.
+     - Komponen `KALENDER LINTAS PERIODE` interaktif bulan November 2026 dengan penanda tanggal aktif `12/11/2026` dan tombol *Hari ini*.
+     - Filter `PENYELENGGARA EVENT` dengan checklist multi-pilihan ormawa (`Himasifo`, `BEM FISIP`, `Himakom`, `Himatifa`).
+     - Tautan bantuan pengelola fasilitas, identitas `SelasarSpace · Layanan kampus`, serta profil `Admin Fasilitas AF (Sub-Admin)` dengan tombol *Keluar*.
+2. **Header Sub-Admin & Tombol Aksi:**
+   - Komponen [AdminHeader.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminHeader.tsx) menampilkan judul `Monitor Jadwal & Kontrol Slot`, label tanggal `Kamis, 12/11/2026`, tombol `</> File HTML`, tombol `Ekspor Laporan`, tombol utama `+ Tambah Jadwal Manual`, serta tombol pengalih tema gelap/terang (`ThemeToggle`).
+3. **Ringkasan 4 Kartu Statistik:**
+   - Komponen [AdminStatCards.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminStatCards.tsx) memetakan 4 indikator kunci:
+     - `Slot Kosong Tersedia`: **1 Slot** (*Tersedia pada 12/11/2026*).
+     - `Jadwal Terisi`: **4 Jadwal** (*Himasifo, Himakom, BEM FISIP, Himatifa*).
+     - `Pembatalan Periode Ini`: **2** (*Jadwal dilepas mandiri oleh user*) dengan aksen merah.
+     - `Total Pemakaian Bulan Ini`: **10 Sesi** (*November 2026*).
+4. **Linimasa Jadwal & Kontrol Slot (08.00–20.00 WIB):**
+   - Komponen [AdminTimelineView.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminTimelineView.tsx) memuat 6 slot waktu:
+     - `08.00 - 10.00 WIB`: Rapat Kerja & Evaluasi Program SI (Himasifo) `[Dipesan]`.
+     - `10.00 - 12.00 WIB`: Welcome Party Pengurus Muda (Himakom) `[Dipesan]`.
+     - `12.00 - 14.00 WIB`: Waktu bentrok (Rabes BEM Lintas Kementerian) `[Bentrok]` (aksen merah).
+     - `13.00 - 15.00 WIB`: Rabes BEM Lintas Kementerian (BEM FISIP) `[Dipesan]`.
+     - `15.00 - 17.00 WIB`: Rapat Fiksasi Pameran Karya IT (Himatifa) `[Dipesan]`.
+     - `18.00 - 20.00 WIB`: Waktu tersedia `[Tersedia]` (lengkap dengan tombol `+ Isi Manual` dan `Kunci waktu`).
+   - Tautan `Lihat Detail` membuka modal rincian jadwal [AdminSlotDetailModal.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminSlotDetailModal.tsx).
+5. **Log Aktivitas & Audit Pembatalan User:**
+   - Komponen [AdminActivityLog.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminActivityLog.tsx) memuat:
+     - Input pencarian real-time (organisasi, nama PJ, tanggal DMY).
+     - Filter tab interaktif: `Semua`, `Booking Baru`, dan `Dibatalkan User`.
+     - Kartu audit pembatalan lengkap dengan alasan user, status pelepasan mandiri, waktu batal, dan badge hijau `Slot Otomatis Dibuka`.
+     - Tombol aksi `✨ Simulasi User Batal` yang mensimulasikan pelepasan jadwal oleh ormawa secara real-time pada state lokal, otomatis membuka slot linimasa dan menambahkan catatan audit baru.
+6. **Modal-Modal Kontrol Interaktif Tambahan:**
+   - [AdminManualBookingModal.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminManualBookingModal.tsx): Formulir penambahan jadwal manual oleh Sub-Admin.
+   - [AdminExportModal.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminExportModal.tsx): Ringkasan rekapitulasi peminjaman ormawa dengan tombol unduh CSV dan PDF.
+   - [AdminSupportModal.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminSupportModal.tsx): Informasi kontak WhatsApp Helpdesk Biro Umum & Sarana Prasarana Kampus.
+   - [AdminLogoutModal.tsx](file:///d:/BDL/System-Booking-Selasar/src/components/admin/AdminLogoutModal.tsx): Dialog konfirmasi pengakhiran sesi Sub-Admin.
+7. **Kepatuhan Batasan & Anti-Slop:**
+   - 100% frontend murni dengan state lokal React tanpa HTTP request / backend / fetch / axios.
+   - Menggunakan penanda komentar `// [FRONTEND CHANGE START: ...]` dan `// [FRONTEND CHANGE END: ...]`.
+
+---
+
 ## [Milestone 1 — Icon Jam Gelap, Aksen Warna pada Waktu & Keterangan Netral Gelap]
 **Tanggal:** 18 November 2026  
 **Referensi:** Instruksi revisi pengguna untuk pewarnaan presisi pada elemen baris jadwal:
