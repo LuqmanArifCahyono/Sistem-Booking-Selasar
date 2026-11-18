@@ -80,8 +80,41 @@ export function MiniCalendar({
     return isSameDay(d, today);
   };
 
+  // Format tanggal secara lokal agar tidak bergeser karena konversi zona waktu.
+  const formatDateInput = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
+  const handleDatePickerChange = (value: string) => {
+    if (!value) return;
+    const [selectedYear, selectedMonth, selectedDay] = value.split("-").map(Number);
+    if (!selectedYear || !selectedMonth || !selectedDay) return;
+    onSelectDate(new Date(selectedYear, selectedMonth - 1, selectedDay));
+  };
+
   return (
     <div className="w-full">
+      {/* Direct Date Picker */}
+      <div className="mb-3 px-1">
+        <label
+          htmlFor="sidebar-calendar-date-picker"
+          className="mb-1.5 block text-xs font-medium text-gray-600"
+        >
+          Pilih tanggal
+        </label>
+        <input
+          id="sidebar-calendar-date-picker"
+          type="date"
+          value={formatDateInput(selectedDate)}
+          onChange={(event) => handleDatePickerChange(event.target.value)}
+          className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          aria-label="Pilih tanggal untuk ditampilkan di kalender"
+        />
+      </div>
+
       {/* Month Navigator Header */}
       <div className="flex items-center justify-between mb-3 px-1">
         <span className="text-sm font-semibold text-gray-900">

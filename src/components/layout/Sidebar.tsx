@@ -37,7 +37,7 @@ export function Sidebar({
       {isOpenMobile && (
         <div
           onClick={onCloseMobile}
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-2xs transition-opacity"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-2xs transition-opacity cursor-pointer"
           aria-hidden="true"
         />
       )}

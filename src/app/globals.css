@@ -20,3 +20,20 @@ body {
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Cursor behavior khusus area dashboard (tidak memengaruhi halaman login/register). */
+.dashboard-shell button:not(:disabled),
+.dashboard-shell a[href],
+.dashboard-shell select:not(:disabled),
+.dashboard-shell input[type="checkbox"]:not(:disabled),
+.dashboard-shell input[type="radio"]:not(:disabled),
+.dashboard-shell [role="button"]:not([aria-disabled="true"]),
+.dashboard-shell [role="tab"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+.dashboard-shell button:disabled,
+.dashboard-shell select:disabled,
+.dashboard-shell input:disabled,
+.dashboard-shell [aria-disabled="true"] {
+  cursor: not-allowed;
+}
