@@ -48,12 +48,18 @@ export function BookingFormModal({
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!open) return;
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [prevSelectedDate, setPrevSelectedDate] = useState(selectedDate);
+
+  if (open && (!prevOpen || selectedDate !== prevSelectedDate)) {
+    setPrevOpen(open);
+    setPrevSelectedDate(selectedDate);
     setDate(toDateInputValue(selectedDate));
     setOrganizationId(organizations[0]?.id ?? "");
     setError("");
-  }, [open, selectedDate, organizations]);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   useEffect(() => {
     if (!open) return;

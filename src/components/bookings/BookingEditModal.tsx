@@ -14,6 +14,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
   const [title, setTitle] = useState("");
   const [organizationId, setOrganizationId] = useState("");
   const [personInCharge, setPersonInCharge] = useState("");
+  const [pjContact, setPjContact] = useState("");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -21,18 +22,23 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!event) return;
-    setTitle(event.title);
-    setOrganizationId(event.organizationId);
-    setPersonInCharge(event.personInCharge ?? "");
-    setDate(event.date);
-    setStartTime(event.startTime.replace(".", ":"));
-    setEndTime(event.endTime.replace(".", ":"));
-    setPurpose(event.purpose ?? "");
-    setNotes(event.notes ?? "");
-    setError("");
-  }, [event]);
+  const [prevEvent, setPrevEvent] = useState(event);
+
+  if (event !== prevEvent) {
+    setPrevEvent(event);
+    if (event) {
+      setTitle(event.title);
+      setOrganizationId(event.organizationId);
+      setPersonInCharge(event.personInCharge ?? "");
+      setPjContact(event.pjContact ?? "");
+      setDate(event.date);
+      setStartTime(event.startTime.replace(".", ":"));
+      setEndTime(event.endTime.replace(".", ":"));
+      setPurpose(event.purpose ?? "");
+      setNotes(event.notes ?? "");
+      setError("");
+    }
+  }
 
   useEffect(() => {
     if (!event) return;
@@ -50,7 +56,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!title.trim() || !personInCharge.trim() || !purpose.trim() || !organizationId) {
+    if (!title.trim() || !personInCharge.trim() || !organizationId) {
       setError("Lengkapi seluruh informasi wajib.");
       return;
     }
@@ -69,6 +75,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
       organizationId,
       organizationName: org.name,
       personInCharge: personInCharge.trim(),
+      pjContact: pjContact.trim() || event.pjContact || "081234567890",
       date,
       startTime: startTime.replace(":", "."),
       endTime: endTime.replace(":", "."),
@@ -126,7 +133,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <label className={labelClass} htmlFor="edit-org">
                   Penyelenggara
@@ -154,6 +161,18 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
                   value={personInCharge}
                   onChange={(e) => setPersonInCharge(e.target.value)}
                   required
+                />
+              </div>
+              <div>
+                <label className={labelClass} htmlFor="edit-contact">
+                  Kontak / WhatsApp
+                </label>
+                <input
+                  id="edit-contact"
+                  className={inputClass}
+                  value={pjContact}
+                  placeholder="081234567890"
+                  onChange={(e) => setPjContact(e.target.value)}
                 />
               </div>
             </div>

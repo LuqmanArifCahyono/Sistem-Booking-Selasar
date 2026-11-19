@@ -4,7 +4,6 @@ import {
   AdminOrganizationFilter,
   AdminStats,
   AdminTimelineSlot,
-  SlotStatus,
 } from "@/types/admin";
 
 export const INITIAL_ADMIN_STATS: AdminStats = {

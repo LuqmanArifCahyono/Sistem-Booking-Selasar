@@ -1,0 +1,170 @@
+// SelasarSpace — skema data inti.
+// Ditulis Postgres-compatible walau dev pakai SQLite: enum disimpan sebagai String
+// (lihat src/types/domain.ts) supaya migrasi ke Supabase Postgres cukup ganti DATABASE_URL.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ---------------------------------------------------------------------------
+// Identitas & otorisasi
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  name         String
+  passwordHash String
+
+  // USER | ADMIN | SUPER_ADMIN
+  role String @default("USER")
+
+  // KETUA | SEKRETARIS | BENDAHARA — hanya untuk role ADMIN
+  position String?
+
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  // Dipaksa ganti sandi saat login pertama (akun dibuat super admin)
+  mustChangePassword Boolean @default(false)
+  isActive           Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookingsCreated  Booking[]  @relation("BookingCreator")
+  bookingsApproved Booking[]  @relation("BookingApprover")
+  slotLocks        SlotLock[]
+  auditLogs        AuditLog[]
+
+  @@index([organizationId])
+  @@index([role])
+}
+
+model Organization {
+  id        String @id @default(cuid())
+  name      String @unique
+  slug      String @unique
+  shortName String
+
+  // FIK | FISIP
+  faculty      String
+  studyProgram String?
+  colorHex     String  @default("#2563EB")
+  isActive     Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users    User[]
+  bookings Booking[]
+
+  @@index([faculty])
+}
+
+// ---------------------------------------------------------------------------
+// Ruang & peminjaman
+// ---------------------------------------------------------------------------
+
+model Room {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  slug      String  @unique
+  openTime  String  @default("08:00") // HH:mm
+  closeTime String  @default("21:00") // HH:mm
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings Booking[]
+}
+
+model Booking {
+  id    String @id @default(cuid())
+  title String
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  date      String // YYYY-MM-DD
+  startTime String // HH:mm
+  endTime   String // HH:mm
+
+  purpose   String?
+  pjName    String
+  pjContact String
+
+  // DIJADWALKAN | SELESAI | KADALUWARSA | DIBATALKAN
+  // KADALUWARSA tidak disimpan permanen: dihitung saat dibaca (lihat src/lib/booking-status.ts)
+  status String @default("DIJADWALKAN")
+
+  // ADMIN | SUPER_ADMIN — jejak siapa yang membuat
+  source String @default("ADMIN")
+
+  createdById String
+  createdBy   User   @relation("BookingCreator", fields: [createdById], references: [id])
+
+  approvedById String?
+  approvedBy   User?   @relation("BookingApprover", fields: [approvedById], references: [id])
+
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // soft delete
+
+  @@index([date, roomId])
+  @@index([organizationId])
+  @@index([createdById])
+  @@index([status])
+}
+
+// Slot yang ditutup admin/super admin (tidak bisa dipinjam siapa pun)
+model SlotLock {
+  id        String  @id @default(cuid())
+  date      String // YYYY-MM-DD
+  startTime String // HH:mm
+  endTime   String // HH:mm
+  reason    String?
+
+  lockedById String
+  lockedBy   User   @relation(fields: [lockedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([date])
+}
+
+// ---------------------------------------------------------------------------
+// Jejak audit
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id       String @id @default(cuid())
+  action   String // BOOKING_CREATE | BOOKING_UPDATE | BOOKING_DELETE | SLOT_LOCK | USER_CREATE | ...
+  entity   String // Booking | User | SlotLock | Organization
+  entityId String
+
+  actorId String
+  actor   User   @relation(fields: [actorId], references: [id])
+
+  before String? // JSON string
+  after  String? // JSON string
+  ip     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}

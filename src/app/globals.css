@@ -1,25 +1,82 @@
-
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Token desain SelasarSpace. Sumber kebenaran ada di DESIGN.md.
+ * Komponen tidak boleh menulis hex baru: pakai token ini lewat utility Tailwind
+ * (bg-surface, text-muted, border-line, dst) atau var(--token).
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #111827;
-  --muted: #4b5563;
-  --border: #e5e7eb;
+  /* Dasar */
+  --background: #f8fafc;
+  --foreground: #0f172b;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+  --muted: #62748e;
+  --line: #e2e8f0;
+
+  /* Aksen */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: #eff6ff;
+  --accent-foreground: #ffffff;
+
+  /* Status peminjaman */
+  --status-scheduled: #2563eb;
+  --status-done: #059669;
+  --status-expired: #d97706;
+  --status-cancelled: #dc2626;
+
+  /* Bentuk */
+  --radius-control: 8px;
+  --radius-panel: 12px;
+
+  /* Tipografi */
+  --text-body: 14px;
+  --text-caption: 12px;
 }
 
 .dark {
   --background: #090d16;
   --foreground: #f8fafc;
+  --surface: #111827;
+  --surface-muted: #1e293b;
   --muted: #94a3b8;
-  --border: #1e293b;
+  --line: #1e293b;
+
+  --accent: #2563eb;
+  --accent-hover: #3b82f6;
+  --accent-soft: #172554;
+  --accent-foreground: #ffffff;
+
+  --status-scheduled: #60a5fa;
+  --status-done: #34d399;
+  --status-expired: #fbbf24;
+  --status-cancelled: #f87171;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-status-scheduled: var(--status-scheduled);
+  --color-status-done: var(--status-done);
+  --color-status-expired: var(--status-expired);
+  --color-status-cancelled: var(--status-cancelled);
+
+  --radius-control: var(--radius-control);
+  --radius-panel: var(--radius-panel);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -28,6 +85,26 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Teks isi tidak boleh di bawah 14px (DESIGN.md bagian 5). */
+  font-size: var(--text-body);
+}
+
+/* Fokus keyboard selalu terlihat (DESIGN.md bagian 9). */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Gerak dihormati preferensi pengguna (DESIGN.md bagian 8). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Cursor behavior khusus area dashboard */

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { signOut } from "next-auth/react";
 import { MiniCalendar } from "./MiniCalendar";
 import { GuidancePanel } from "./GuidancePanel";
 import { OrganizationFilter } from "./OrganizationFilter";
@@ -17,6 +18,11 @@ interface SidebarProps {
   onOpenHelp?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
+  user?: {
+    name: string;
+    email: string;
+    role: string;
+  } | null;
 }
 
 export function Sidebar({
@@ -30,6 +36,7 @@ export function Sidebar({
   onOpenHelp,
   isOpenMobile = false,
   onCloseMobile,
+  user,
 }: SidebarProps) {
   return (
     <>
@@ -111,17 +118,45 @@ export function Sidebar({
         </div>
 
         {/* Footer Sidebar */}
-        <div className="pt-6 mt-6 border-t border-gray-100 dark:border-[#1E293B] space-y-1 text-xs">
-          <div className="text-gray-900 dark:text-[#F8FAFC] font-medium">Butuh bantuan?</div>
-          <button
-            type="button"
-            onClick={onOpenHelp}
-            className="text-blue-600 dark:text-[#93C5FD] hover:text-blue-700 dark:hover:text-blue-300 hover:underline inline-flex items-center gap-1 font-medium focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded cursor-pointer"
-          >
-            Hubungi pengelola fasilitas ↗
-          </button>
-          <div className="text-[11px] text-gray-400 dark:text-[#64748B] pt-2">
-            SelasarSpace · Layanan kampus
+        <div className="pt-4 mt-6 border-t border-gray-100 dark:border-[#1E293B] space-y-3 text-xs">
+          {user && (
+            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-[#1E293B]/60 border border-gray-200/70 dark:border-[#334155]">
+              <div className="min-w-0 flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  {user.name.slice(0, 2).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-gray-900 dark:text-[#F8FAFC] truncate leading-tight">
+                    {user.name}
+                  </p>
+                  <p className="text-[10px] text-gray-500 dark:text-[#94A3B8] truncate leading-tight">
+                    {user.role === "USER" ? "Mahasiswa" : user.role === "ADMIN" ? "Admin" : "Super Admin"}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => signOut({ redirectTo: "/login" })}
+                className="text-[11px] font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:underline px-1.5 py-0.5 rounded cursor-pointer shrink-0"
+                title="Keluar dari sesi"
+              >
+                Keluar
+              </button>
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <div className="text-gray-900 dark:text-[#F8FAFC] font-medium">Butuh bantuan?</div>
+            <button
+              type="button"
+              onClick={onOpenHelp}
+              className="text-blue-600 dark:text-[#93C5FD] hover:text-blue-700 dark:hover:text-blue-300 hover:underline inline-flex items-center gap-1 font-medium focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded cursor-pointer"
+            >
+              Hubungi pengelola fasilitas ↗
+            </button>
+            <div className="text-[11px] text-gray-400 dark:text-[#64748B] pt-1">
+              SelasarSpace · Layanan kampus
+            </div>
           </div>
         </div>
       </aside>

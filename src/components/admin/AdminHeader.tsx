@@ -8,14 +8,12 @@ interface AdminHeaderProps {
   dateLabel: string; // e.g. "Kamis, 12/11/2026"
   onOpenExport: () => void;
   onOpenManualBooking: () => void;
-  onOpenHtmlModal?: () => void;
 }
 
 export function AdminHeader({
   dateLabel,
   onOpenExport,
   onOpenManualBooking,
-  onOpenHtmlModal,
 }: AdminHeaderProps) {
   return (
     <header className="bg-white dark:bg-[#111827] border-b border-[#E2E8F0] dark:border-[#1E293B] px-5 sm:px-7 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sticky top-0 z-20 transition-colors">
@@ -31,15 +29,6 @@ export function AdminHeader({
 
       {/* Action Buttons Top Right */}
       <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
-        {/* Tombol File HTML */}
-        <button
-          type="button"
-          onClick={onOpenHtmlModal}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#314158] dark:text-[#CBD5E1] hover:bg-[#F8FAFC] dark:hover:bg-[#334155] transition-all cursor-pointer shadow-2xs hover:shadow-xs"
-        >
-          <span className="font-mono text-[11px]">&lt;/&gt;</span>
-          <span>File HTML</span>
-        </button>
 
         {/* Tombol Ekspor Laporan */}
         <button

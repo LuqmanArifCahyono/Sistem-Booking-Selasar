@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
+import { signOut } from "next-auth/react";
 import { BookingEvent, Organization } from "@/types";
-import { CURRENT_USER, GUIDANCE_ITEMS, MONTH_NAMES_ID } from "@/constants";
+import { GUIDANCE_ITEMS, MONTH_NAMES_ID } from "@/constants";
 
 export type QuickPanelType = "profile" | "notifications" | "settings" | "help";
 
@@ -11,6 +12,11 @@ interface Props {
   events: BookingEvent[];
   organizations: Organization[];
   today: Date;
+  user?: {
+    name: string;
+    email: string;
+    role: string;
+  } | null;
   onClose: () => void;
   onOpenHistory: () => void;
   onSaveOrganizations: (ids: string[]) => void;
@@ -22,11 +28,16 @@ function formatDate(value: string) {
   return `${day} ${MONTH_NAMES_ID[month - 1]} ${year}`;
 }
 
-export function QuickPanelModal({ type, events, organizations, today, onClose, onOpenHistory, onSaveOrganizations, onOpenBooking }: Props) {
+export function QuickPanelModal({ type, events, organizations, today, user, onClose, onOpenHistory, onSaveOrganizations, onOpenBooking }: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>(organizations.filter((item) => item.checked).map((item) => item.id));
-  useEffect(() => {
+  const [prevType, setPrevType] = useState(type);
+  const [prevOrganizations, setPrevOrganizations] = useState(organizations);
+
+  if (type !== prevType || organizations !== prevOrganizations) {
+    setPrevType(type);
+    setPrevOrganizations(organizations);
     setSelectedIds(organizations.filter((item) => item.checked).map((item) => item.id));
-  }, [organizations, type]);
+  }
 
   const nextEvents = useMemo(() => {
     const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -59,17 +70,54 @@ export function QuickPanelModal({ type, events, organizations, today, onClose, o
         {type === "profile" && <div className="mt-5 space-y-4">
           <div className="rounded-xl border border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#0F172A] p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 dark:bg-[#1E293B] text-sm font-semibold text-gray-700 dark:text-[#93C5FD]">
-                {CURRENT_USER.name.slice(0, 2).toUpperCase()}
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-white text-sm font-semibold shrink-0">
+                {(user?.name || "User").slice(0, 2).toUpperCase()}
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-950 dark:text-[#F8FAFC]">{CURRENT_USER.name}</p>
-                <p className="text-xs text-gray-500 dark:text-[#94A3B8]">{CURRENT_USER.role}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-gray-950 dark:text-[#F8FAFC] truncate">
+                  {user?.name || "Pengguna"}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-[#94A3B8] truncate">
+                  {user?.email || "Akun SelasarSpace"}
+                </p>
+                <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold rounded bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300">
+                  {user?.role === "USER"
+                    ? "Mahasiswa (Read-only)"
+                    : user?.role === "ADMIN"
+                    ? "Admin Himpunan"
+                    : user?.role === "SUPER_ADMIN"
+                    ? "Super Admin"
+                    : "Mahasiswa"}
+                </span>
               </div>
             </div>
           </div>
-          <button type="button" onClick={onOpenHistory} className="w-full rounded-lg border border-gray-200 dark:border-[#334155] bg-gray-50 dark:bg-[#1E293B] px-4 py-3 text-left text-sm font-medium text-gray-800 dark:text-[#CBD5E1] hover:bg-gray-100 dark:hover:bg-[#334155] cursor-pointer transition-colors">
-            Lihat histori peminjaman <span className="float-right">→</span>
+
+          {user?.role !== "USER" && (
+            <button
+              type="button"
+              onClick={onOpenHistory}
+              className="w-full rounded-lg border border-gray-200 dark:border-[#334155] bg-gray-50 dark:bg-[#1E293B] px-4 py-3 text-left text-sm font-medium text-gray-800 dark:text-[#CBD5E1] hover:bg-gray-100 dark:hover:bg-[#334155] cursor-pointer transition-colors"
+            >
+              Lihat histori peminjaman <span className="float-right">→</span>
+            </button>
+          )}
+
+          {user?.role === "USER" && (
+            <div className="rounded-lg border border-blue-100 dark:border-blue-900/40 bg-blue-50/50 dark:bg-blue-950/20 p-3 text-xs text-blue-700 dark:text-blue-300">
+              Akun Anda berstatus <strong>Mahasiswa</strong>. Anda dapat memantau seluruh ketersediaan dan jadwal peminjaman selasar secara langsung pada kalender.
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => signOut({ redirectTo: "/login" })}
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer shadow-xs"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Keluar dari Akun (Logout)</span>
           </button>
         </div>}
 

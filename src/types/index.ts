@@ -19,9 +19,12 @@ export interface BookingEvent {
   startTime: string; // "09.00"
   endTime: string; // "11.00"
   personInCharge?: string;
+  pjContact?: string;
+  /** true kalau pengguna yang sedang masuk berhak mengubah jadwal ini. */
+  canMutate?: boolean;
   purpose?: string;
   notes?: string;
-  status?: "terjadwal" | "selesai" | "dibatalkan";
+  status?: "terjadwal" | "selesai" | "dibatalkan" | "kadaluwarsa";
   bgClass: string;
   textClass: string;
   subtextClass: string;

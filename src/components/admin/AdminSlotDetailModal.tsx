@@ -1,23 +1,63 @@
 // [FRONTEND CHANGE START: Modal Detail Jadwal Panel Sub-Admin - Milestone 1]
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { AdminTimelineSlot } from "@/types/admin";
+import { DAY_NAMES_ID } from "@/constants/admin";
+
+function formatSlotDateWithDay(dateStr: string): string {
+  if (!dateStr) return "-";
+  let d: Date | null = null;
+  if (dateStr.includes("/")) {
+    const [day, month, year] = dateStr.split("/").map(Number);
+    d = new Date(year, month - 1, day);
+  } else if (dateStr.includes("-")) {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    d = new Date(year, month - 1, day);
+  }
+  if (!d || isNaN(d.getTime())) return dateStr;
+  return `${DAY_NAMES_ID[d.getDay()]}, ${dateStr}`;
+}
 
 interface AdminSlotDetailModalProps {
   slot: AdminTimelineSlot | null;
   onClose: () => void;
+  userRole?: string;
+  onEditBooking?: (slot: AdminTimelineSlot) => void;
+  onDeleteBooking?: (slot: AdminTimelineSlot) => void;
 }
 
 export function AdminSlotDetailModal({
   slot,
   onClose,
+  userRole,
+  onEditBooking,
+  onDeleteBooking,
 }: AdminSlotDetailModalProps) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  // Render-time state reset when slot changes
+  const [prevSlotId, setPrevSlotId] = useState(slot?.id);
+  if (slot?.id !== prevSlotId) {
+    setPrevSlotId(slot?.id);
+    setConfirmDelete(false);
+  }
+
   if (!slot) return null;
 
   const isBentrok = slot.status === "bentrok";
   const isDipesan = slot.status === "dipesan";
   const isTersedia = slot.status === "tersedia";
+  const isSuperAdmin = userRole === "SUPER_ADMIN";
+
+  const handleDeleteClick = () => {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      return;
+    }
+    onDeleteBooking?.(slot);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
@@ -95,7 +135,7 @@ export function AdminSlotDetailModal({
                 Tanggal Terpilih
               </span>
               <span className="text-xs font-semibold text-[#0F172B] dark:text-[#F8FAFC] mt-1 block">
-                Kamis, {slot.date}
+                {formatSlotDateWithDay(slot.date)}
               </span>
             </div>
 
@@ -134,17 +174,59 @@ export function AdminSlotDetailModal({
             </p>
           </div>
 
-          {/* Info Audit Sub-Admin */}
-          <div className="p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 flex items-start gap-2">
-            <span className="text-sm shrink-0">⚠️</span>
-            <span>
-              <strong>Ketentuan Sub-Admin:</strong> Pembatalan jadwal hanya dilakukan secara mandiri oleh akun ormawa yang bersangkutan melalui formulir pembatalan berlandaskan alasan valid.
-            </span>
-          </div>
+          {/* Info Audit / Super Admin Badge */}
+          {isSuperAdmin ? (
+            <div className="p-3 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-[11px] text-blue-900 dark:text-blue-200 flex items-start gap-2">
+              <span className="text-sm shrink-0">🛡️</span>
+              <span>
+                <strong>Kontrol Super Admin:</strong> Anda memiliki wewenang penuh untuk mengubah detail, memindahkan tanggal/jam kegiatan, atau menghapus jadwal ini langsung dari panel.
+              </span>
+            </div>
+          ) : (
+            <div className="p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 flex items-start gap-2">
+              <span className="text-sm shrink-0">⚠️</span>
+              <span>
+                <strong>Ketentuan Sub-Admin:</strong> Pembatalan jadwal hanya dilakukan secara mandiri oleh akun ormawa yang bersangkutan melalui formulir pembatalan berlandaskan alasan valid.
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Footer Tombol Tutup */}
-        <div className="mt-5 pt-3 border-t border-[#E2E8F0] dark:border-[#1E293B] flex justify-end">
+        {/* Footer Actions */}
+        <div className="mt-5 pt-3 border-t border-[#E2E8F0] dark:border-[#1E293B] flex items-center justify-between gap-2 flex-wrap">
+          {/* Tombol Super Admin (Ubah & Hapus) */}
+          {isSuperAdmin && isDipesan ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onEditBooking?.(slot);
+                }}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+              >
+                <span>✏️</span>
+                <span>Ubah / Pindah Jadwal</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDeleteClick}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                  confirmDelete
+                    ? "bg-[#DC2626] hover:bg-[#B91C1C] text-white animate-pulse"
+                    : "border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
+                }`}
+              >
+                <span>🗑️</span>
+                <span>{confirmDelete ? "Yakin Hapus Jadwal?" : "Hapus Jadwal"}</span>
+              </button>
+            </div>
+          ) : (
+            <div />
+          )}
+
+          {/* Tombol Tutup */}
           <button
             type="button"
             onClick={onClose}

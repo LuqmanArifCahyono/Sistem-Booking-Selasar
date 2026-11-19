@@ -13,11 +13,20 @@ interface HeaderProps {
   onPrevPeriod: () => void;
   onNextPeriod: () => void;
   onToday: () => void;
-  onPinjamTempat: () => void;
+  /** Hanya diisi bila pengguna berhak membuat jadwal. Kalau kosong, tombolnya tidak dirender. */
+  onPinjamTempat?: () => void;
   onToggleSidebarMobile: () => void;
   onOpenProfile?: () => void;
   onOpenNotification?: () => void;
   onOpenSettings?: () => void;
+  /** Tautan kembali ke panel, dipakai kalau halaman ini dibuka dari panel. */
+  backLink?: { href: string; label: string };
+  secondaryBackLink?: { href: string; label: string };
+  user?: {
+    name: string;
+    email: string;
+    role: string;
+  } | null;
 }
 
 export function Header({
@@ -33,6 +42,9 @@ export function Header({
   onOpenProfile,
   onOpenNotification,
   onOpenSettings,
+  backLink,
+  secondaryBackLink,
+  user,
 }: HeaderProps) {
   const monthName = MONTH_NAMES_ID[currentDate.getMonth()];
   const year = currentDate.getFullYear();
@@ -63,11 +75,13 @@ export function Header({
     return `${monthName} ${year}`;
   };
 
+  const canViewHistory = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+
   const views: { id: CalendarView; label: string }[] = [
     { id: "mingguan", label: "Mingguan" },
     { id: "harian", label: "Harian" },
     { id: "bulan", label: "Bulan" },
-    { id: "histori", label: "Histori" },
+    ...(canViewHistory ? [{ id: "histori" as const, label: "Histori" }] : []),
   ];
 
   return (
@@ -185,19 +199,40 @@ export function Header({
             })}
           </div>
 
-          {/* Pinjam Tempat Button */}
-          <button
-            type="button"
-            onClick={onPinjamTempat}
-            className="h-9 px-4 rounded-full bg-gray-950 hover:bg-gray-800 dark:bg-[#2563EB] dark:hover:bg-blue-600 text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 shadow-2xs transition-all active:scale-98 focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
-          >
-            <span className="text-base leading-none font-semibold">+</span>
-            <span>Pinjam Tempat</span>
-          </button>
+          {backLink && (
+            <a
+              href={backLink.href}
+              className="flex h-11 items-center rounded-control border border-line px-3 text-sm font-semibold text-foreground hover:bg-surface-muted"
+            >
+              {backLink.label}
+            </a>
+          )}
+
+          {secondaryBackLink && (
+            <a
+              href={secondaryBackLink.href}
+              className="flex h-11 items-center rounded-control border border-line px-3 text-sm font-semibold text-foreground hover:bg-surface-muted"
+            >
+              {secondaryBackLink.label}
+            </a>
+          )}
+
+          {/* Pinjam Tempat Button: hanya muncul untuk pengguna yang berhak */}
+          {onPinjamTempat && (
+            <button
+              type="button"
+              onClick={onPinjamTempat}
+              className="flex h-11 items-center gap-1.5 rounded-control bg-accent px-4 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover"
+            >
+              <span className="text-base leading-none">+</span>
+              <span>Pinjam Tempat</span>
+            </button>
+          )}
 
           {/* User Nav and Quick Actions */}
           <div className="pl-1">
             <UserNav
+              user={user}
               onOpenProfile={onOpenProfile}
               onOpenNotification={onOpenNotification}
               onOpenSettings={onOpenSettings}

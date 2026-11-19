@@ -1,21 +1,29 @@
 "use client";
 
 import React, { useState } from "react";
-import { CURRENT_USER } from "@/constants";
+import { signOut } from "next-auth/react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface UserNavProps {
+  user?: {
+    name: string;
+    email: string;
+    role: string;
+  } | null;
   onOpenProfile?: () => void;
   onOpenNotification?: () => void;
   onOpenSettings?: () => void;
 }
 
 export function UserNav({
+  user,
   onOpenProfile,
   onOpenNotification,
   onOpenSettings,
 }: UserNavProps) {
   const [showNotificationBadge] = useState(true);
+  const displayName = user?.name || "Pengguna";
+  const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
     <div className="flex items-center gap-2">
@@ -78,16 +86,33 @@ export function UserNav({
         </svg>
       </button>
 
-      {/* User Avatar */}
+      {/* User Avatar & Name */}
       <button
         type="button"
         onClick={onOpenProfile}
-        aria-label={`Profil pengguna: ${CURRENT_USER.name}`}
-        className="w-9 h-9 rounded-full overflow-hidden border border-gray-300 dark:border-[#334155] bg-gray-100 dark:bg-[#1E293B] flex items-center justify-center hover:ring-2 hover:ring-gray-300 dark:hover:ring-slate-600 transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
+        aria-label={`Profil pengguna: ${displayName}`}
+        title={`Profil: ${displayName} (${user?.email || ""})`}
+        className="h-9 px-2.5 rounded-full border border-gray-300 dark:border-[#334155] bg-gray-100 dark:bg-[#1E293B] flex items-center gap-1.5 hover:ring-2 hover:ring-gray-300 dark:hover:ring-slate-600 transition-all focus-visible:ring-2 focus-visible:ring-blue-500 focus:outline-none cursor-pointer"
       >
-        <span className="text-xs font-semibold text-gray-700 dark:text-[#93C5FD] select-none">
-          {CURRENT_USER.name.substring(0, 2).toUpperCase()}
+        <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold select-none">
+          {initials}
         </span>
+        <span className="text-xs font-semibold text-gray-700 dark:text-[#CBD5E1] max-w-[100px] truncate hidden sm:inline-block">
+          {displayName}
+        </span>
+      </button>
+
+      {/* Tombol Logout Jelas */}
+      <button
+        type="button"
+        onClick={() => signOut({ redirectTo: "/login" })}
+        className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20 px-3 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 hover:text-red-700 dark:hover:text-red-300 transition-colors cursor-pointer"
+        title="Keluar dari akun (Logout)"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span>Keluar</span>
       </button>
     </div>
   );

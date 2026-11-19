@@ -1,8 +1,8 @@
 // [FRONTEND CHANGE START: Modal Konfirmasi Logout Sub-Admin - Milestone 1]
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { signOut } from "next-auth/react";
 
 interface AdminLogoutModalProps {
   isOpen: boolean;
@@ -13,13 +13,18 @@ export function AdminLogoutModal({
   isOpen,
   onClose,
 }: AdminLogoutModalProps) {
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleConfirmLogout = () => {
-    onClose();
-    router.push("/login");
+  const handleConfirmLogout = async () => {
+    try {
+      setLoading(true);
+      await signOut({ callbackUrl: "/login" });
+    } finally {
+      setLoading(false);
+      onClose();
+    }
   };
 
   return (
@@ -48,16 +53,18 @@ export function AdminLogoutModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold rounded-lg border border-[#E2E8F0] dark:border-[#334155] text-[#314158] dark:text-[#CBD5E1] hover:bg-[#F8FAFC] dark:hover:bg-[#1E293B] transition-colors cursor-pointer"
+            disabled={loading}
+            className="px-4 py-2 text-xs font-semibold rounded-lg border border-[#E2E8F0] dark:border-[#334155] text-[#314158] dark:text-[#CBD5E1] hover:bg-[#F8FAFC] dark:hover:bg-[#1E293B] transition-colors cursor-pointer disabled:opacity-50"
           >
             Batal
           </button>
           <button
             type="button"
             onClick={handleConfirmLogout}
-            className="px-4 py-2 text-xs font-bold rounded-lg bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-xs transition-colors cursor-pointer"
+            disabled={loading}
+            className="px-4 py-2 text-xs font-bold rounded-lg bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-xs transition-colors cursor-pointer disabled:opacity-50"
           >
-            Ya, Keluar
+            {loading ? "Sedang keluar..." : "Ya, Keluar"}
           </button>
         </div>
       </div>

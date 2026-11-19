@@ -20,14 +20,12 @@ export function AdminActivityLog({
   // Filter logs berdasarkan tab, pencarian, dan filter organisasi
   const filteredLogs = useMemo(() => {
     return logs.filter((log) => {
-      // Filter organisasi dari sidebar
-      if (
-        selectedOrgIds &&
-        selectedOrgIds.length > 0 &&
-        log.organizationId &&
-        !selectedOrgIds.includes(log.organizationId)
-      ) {
-        return false;
+      // Filter organisasi dari sidebar: jika daftar filter disediakan (bahkan kosong),
+      // sembunyikan log jika organisasinya tidak dicentang.
+      if (selectedOrgIds !== undefined && log.organizationId) {
+        if (!selectedOrgIds.includes(log.organizationId)) {
+          return false;
+        }
       }
 
       // Filter tab

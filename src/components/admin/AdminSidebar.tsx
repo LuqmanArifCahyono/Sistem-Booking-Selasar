@@ -1,7 +1,7 @@
 // [FRONTEND CHANGE START: Sidebar Navigasi Panel Sub-Admin - Milestone 1 & 2]
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { AdminOrganizationFilter } from "@/types/admin";
 import { formatDateDMY, MONTH_NAMES_ID } from "@/constants/admin";
@@ -16,6 +16,13 @@ interface AdminSidebarProps {
   onOpenHelp: () => void;
   onOpenLogout: () => void;
   accountsCount?: number;
+  user?: {
+    name: string;
+    email: string;
+    role: string;
+    position?: string | null;
+    organizationName?: string | null;
+  };
 }
 
 export function AdminSidebar({
@@ -28,21 +35,22 @@ export function AdminSidebar({
   onOpenHelp,
   onOpenLogout,
   accountsCount = 6,
+  user,
 }: AdminSidebarProps) {
   // [FRONTEND CHANGE START: Navigasi Kalender Antarbulan - Milestone 2]
   const [viewMonthDate, setViewMonthDate] = useState<Date>(
     () => new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
   );
+  const [prevSelectedDate, setPrevSelectedDate] = useState<Date>(selectedDate);
 
-  // Sinkronisasi bila selectedDate berubah di luar sidebar
-  useEffect(() => {
-    if (
-      selectedDate.getFullYear() !== viewMonthDate.getFullYear() ||
-      selectedDate.getMonth() !== viewMonthDate.getMonth()
-    ) {
-      setViewMonthDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
-    }
-  }, [selectedDate]);
+  // Sinkronisasi bila selectedDate berubah di luar sidebar (render-time state adjustment)
+  if (
+    selectedDate.getFullYear() !== prevSelectedDate.getFullYear() ||
+    selectedDate.getMonth() !== prevSelectedDate.getMonth()
+  ) {
+    setPrevSelectedDate(selectedDate);
+    setViewMonthDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
+  }
 
   const viewYear = viewMonthDate.getFullYear();
   const viewMonth = viewMonthDate.getMonth();
@@ -145,6 +153,36 @@ export function AdminSidebar({
               {accountsCount}
             </span>
           </button>
+
+          {/* Menu Tautan: Kalender Selasar */}
+          <Link
+            href="/kalender"
+            className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-lg text-[#314158] dark:text-[#CBD5E1] hover:bg-[#F1F5F9] dark:hover:bg-[#1E293B] transition-all"
+          >
+            <div className="flex items-center gap-2.5">
+              <svg className="w-4 h-4 text-[#2563EB] dark:text-[#93C5FD]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Buka Kalender Selasar</span>
+            </div>
+            <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8] font-bold">›</span>
+          </Link>
+
+          {/* Menu Khusus Super Admin: Panel Super Admin */}
+          {user?.role === "SUPER_ADMIN" && (
+            <Link
+              href="/super-admin"
+              className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-lg text-[#2563EB] dark:text-[#93C5FD] bg-[#2563EB]/5 hover:bg-[#2563EB]/10 transition-all"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-4 w-4 items-center justify-center rounded bg-[#2563EB] text-[9px] font-bold text-white">
+                  S
+                </span>
+                <span>Panel Super Admin</span>
+              </div>
+              <span className="text-[10px] font-bold">›</span>
+            </Link>
+          )}
         </div>
 
         {/* Kalender Lintas Periode */}
@@ -303,14 +341,18 @@ export function AdminSidebar({
         <div className="pt-2 border-t border-[#E2E8F0] dark:border-[#1E293B] flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
             <div className="w-7 h-7 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-xs font-bold shrink-0">
-              AF
+              {user?.name ? user.name.slice(0, 2).toUpperCase() : "AF"}
             </div>
             <div className="min-w-0">
               <span className="text-xs font-bold text-[#0F172B] dark:text-[#F8FAFC] truncate block leading-tight">
-                Admin Fasilitas
+                {user?.name || "Admin Fasilitas"}
               </span>
               <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8] truncate block leading-tight">
-                (Sub-Admin)
+                {user?.organizationName
+                  ? `${user.organizationName}`
+                  : user?.role === "SUPER_ADMIN"
+                  ? "Super Admin"
+                  : "(Sub-Admin)"}
               </span>
             </div>
           </div>

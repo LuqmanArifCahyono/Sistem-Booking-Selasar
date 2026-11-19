@@ -6,9 +6,27 @@ import { BookingEvent } from "@/types";
 interface BookingDetailModalProps {
   event: BookingEvent | null;
   onClose: () => void;
-  onCancelBooking: (event: BookingEvent) => void;
-  onEditBooking: (event: BookingEvent) => void;
+  /** Diisi hanya kalau pengguna berhak mengubah jadwal ini. */
+  onEditBooking?: (event: BookingEvent) => void;
+  onCancelBooking?: (event: BookingEvent) => void;
+  onCompleteBooking?: (event: BookingEvent) => void;
+  onDeleteBooking?: (event: BookingEvent) => void;
+  busy?: boolean;
 }
+
+const STATUS_LABEL: Record<string, string> = {
+  terjadwal: "Dijadwalkan",
+  selesai: "Selesai",
+  kadaluwarsa: "Kadaluwarsa",
+  dibatalkan: "Dibatalkan",
+};
+
+const STATUS_CLASS: Record<string, string> = {
+  terjadwal: "bg-status-scheduled/10 text-status-scheduled border-status-scheduled/30",
+  selesai: "bg-status-done/10 text-status-done border-status-done/30",
+  kadaluwarsa: "bg-status-expired/10 text-status-expired border-status-expired/30",
+  dibatalkan: "bg-status-cancelled/10 text-status-cancelled border-status-cancelled/30",
+};
 
 function formatDate(value: string) {
   const [year, month, day] = value.split("-").map(Number);
@@ -23,54 +41,60 @@ function formatDate(value: string) {
 export function BookingDetailModal({
   event,
   onClose,
-  onCancelBooking,
   onEditBooking,
+  onCancelBooking,
+  onCompleteBooking,
+  onDeleteBooking,
+  busy = false,
 }: BookingDetailModalProps) {
-  const [confirmCancel, setConfirmCancel] = useState(false);
+  const [confirm, setConfirm] = useState<"batal" | "hapus" | null>(null);
+  const [prevEventId, setPrevEventId] = useState(event?.id);
 
-  useEffect(() => {
-    setConfirmCancel(false);
-  }, [event?.id]);
+  if (event?.id !== prevEventId) {
+    setPrevEventId(event?.id);
+    setConfirm(null);
+  }
 
   useEffect(() => {
     if (!event) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+    const handler = (keyboardEvent: KeyboardEvent) => {
+      if (keyboardEvent.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [event, onClose]);
 
   if (!event) return null;
-  const time = (v: string) => v.replace(".", ":");
+
+  const status = event.status ?? "terjadwal";
+  const bisaUbah = Boolean(onEditBooking || onCancelBooking || onCompleteBooking || onDeleteBooking);
+  const time = (value: string) => value.replace(".", ":");
 
   return (
     <div
-      className="fixed inset-0 z-[110] flex items-center justify-center bg-gray-950/45 dark:bg-black/70 p-3 sm:p-6"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
+      className="fixed inset-0 z-[110] flex items-center justify-center bg-gray-950/45 p-3 sm:p-6 dark:bg-black/70"
+      onMouseDown={(mouseEvent) => {
+        if (mouseEvent.target === mouseEvent.currentTarget) onClose();
       }}
     >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="booking-detail-title"
-        className="w-full max-w-xl overflow-hidden rounded-2xl border border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#111827] text-gray-900 dark:text-[#F8FAFC] shadow-2xl transition-colors"
+        className="w-full max-w-xl overflow-hidden rounded-panel border border-line bg-surface text-foreground shadow-2xl"
       >
-        <header className="flex items-start justify-between border-b border-gray-100 dark:border-[#1E293B] px-5 py-4 sm:px-6">
+        <header className="flex items-start justify-between border-b border-line px-5 py-4 sm:px-6">
           <div>
-            <h2 id="booking-detail-title" className="text-lg font-semibold text-gray-950 dark:text-[#F8FAFC]">
-              Detail Jadwal Peminjaman
+            <h2 id="booking-detail-title" className="text-lg font-semibold text-foreground">
+              Detail Jadwal
             </h2>
-            <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
-              Informasi kegiatan pada kalender SelasarSpace
-            </p>
+            <p className="mt-1 text-sm text-muted">Informasi kegiatan pada kalender selasar</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup detail"
-            className="rounded-lg p-2 text-gray-500 dark:text-[#94A3B8] hover:bg-gray-100 dark:hover:bg-[#1E293B] cursor-pointer"
+            className="rounded-control p-2 text-muted hover:bg-surface-muted"
           >
             ✕
           </button>
@@ -78,97 +102,143 @@ export function BookingDetailModal({
 
         <div className="space-y-5 px-5 py-5 sm:px-6">
           <div>
-            <p className="text-xs font-medium text-gray-500 dark:text-[#94A3B8]">Nama kegiatan</p>
-            <h3 className="mt-1 text-xl font-semibold text-gray-950 dark:text-[#F8FAFC]">{event.title}</h3>
-            <span
-              className={`mt-2 inline-flex rounded-md border px-2 py-1 text-xs font-medium ${event.bgClass} ${event.textClass} ${event.borderClass}`}
-            >
-              {event.organizationName}
-            </span>
+            <p className="text-sm text-muted">Nama kegiatan</p>
+            <h3 className="mt-1 text-xl font-semibold text-foreground">{event.title}</h3>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex rounded-control border px-2 py-1 text-xs font-semibold ${STATUS_CLASS[status] ?? STATUS_CLASS.terjadwal}`}
+              >
+                {STATUS_LABEL[status] ?? status}
+              </span>
+              <span
+                className={`inline-flex rounded-control border px-2 py-1 text-xs font-semibold ${event.bgClass} ${event.textClass} ${event.borderClass}`}
+              >
+                {event.organizationName}
+              </span>
+            </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Tanggal</p>
-              <p className="mt-1 text-sm font-medium text-gray-900 dark:text-[#F8FAFC]">{formatDate(event.date)}</p>
+              <p className="text-sm text-muted">Tanggal</p>
+              <p className="mt-1 text-sm font-medium text-foreground">{formatDate(event.date)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Waktu</p>
-              <p className="mt-1 text-sm font-medium text-gray-900 dark:text-[#F8FAFC]">
+              <p className="text-sm text-muted">Waktu</p>
+              <p className="mt-1 font-mono text-sm font-medium text-foreground">
                 {time(event.startTime)} – {time(event.endTime)} WIB
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Penyelenggara</p>
-              <p className="mt-1 text-sm font-medium text-gray-900 dark:text-[#F8FAFC]">{event.organizationName}</p>
+              <p className="text-sm text-muted">Penyelenggara</p>
+              <p className="mt-1 text-sm font-medium text-foreground">{event.organizationName}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Penanggung jawab</p>
-              <p className="mt-1 text-sm font-medium text-gray-900 dark:text-[#F8FAFC]">
+              <p className="text-sm text-muted">Penanggung jawab</p>
+              <p className="mt-1 text-sm font-medium text-foreground">
                 {event.personInCharge || "Belum dicantumkan"}
               </p>
             </div>
           </div>
 
-          <div>
-            <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Keperluan peminjaman</p>
-            <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-gray-800 dark:text-[#CBD5E1]">
-              {event.purpose || "Informasi keperluan belum tersedia untuk jadwal contoh."}
-            </p>
-          </div>
-
-          {event.notes && (
+          {event.purpose && (
             <div>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8]">Catatan tambahan</p>
-              <p className="mt-1 whitespace-pre-wrap text-sm text-gray-800 dark:text-[#CBD5E1]">{event.notes}</p>
+              <p className="text-sm text-muted">Keperluan peminjaman</p>
+              <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                {event.purpose}
+              </p>
             </div>
           )}
 
-          {confirmCancel && (
-            <div role="alert" className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3">
-              <p className="text-sm font-semibold text-red-800 dark:text-red-300">Batalkan jadwal ini?</p>
-              <p className="mt-1 text-xs text-red-700 dark:text-red-400">Jadwal akan dihapus dari simulasi kalender lokal.</p>
+          {confirm && (
+            <div
+              role="alert"
+              className="rounded-control border border-status-cancelled/30 bg-status-cancelled/10 p-3"
+            >
+              <p className="text-sm font-semibold text-status-cancelled">
+                {confirm === "hapus" ? "Hapus jadwal ini secara permanen?" : "Batalkan jadwal ini?"}
+              </p>
+              <p className="mt-1 text-sm text-foreground">
+                {confirm === "hapus"
+                  ? "Jadwal hilang dari kalender. Riwayatnya tetap tersimpan untuk audit."
+                  : "Slot akan dilepas dan bisa dipakai himpunan lain."}
+              </p>
               <div className="mt-3 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setConfirmCancel(false)}
-                  className="rounded-lg border border-gray-200 dark:border-[#334155] bg-white dark:bg-[#1E293B] px-3 py-2 text-xs text-gray-700 dark:text-[#CBD5E1] cursor-pointer"
+                  onClick={() => setConfirm(null)}
+                  className="min-h-9 rounded-control border border-line px-3 py-1.5 text-sm font-semibold text-foreground hover:bg-surface-muted"
                 >
                   Kembali
                 </button>
                 <button
                   type="button"
-                  onClick={() => onCancelBooking(event)}
-                  className="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 cursor-pointer"
+                  disabled={busy}
+                  onClick={() => {
+                    if (confirm === "hapus") onDeleteBooking?.(event);
+                    else onCancelBooking?.(event);
+                  }}
+                  className="min-h-9 rounded-control bg-status-cancelled px-3 py-1.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60"
                 >
-                  Ya, batalkan
+                  {busy ? "Memproses..." : confirm === "hapus" ? "Ya, hapus" : "Ya, batalkan"}
                 </button>
               </div>
             </div>
           )}
         </div>
 
-        <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 dark:border-[#1E293B] px-5 py-4 sm:px-6">
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => onEditBooking(event)}
-              className="text-xs font-semibold text-blue-600 dark:text-[#93C5FD] hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer"
-            >
-              Edit Jadwal
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmCancel(true)}
-              className="text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 cursor-pointer"
-            >
-              Batalkan Jadwal
-            </button>
+        <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-4 sm:px-6">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {onEditBooking && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => onEditBooking(event)}
+                className="inline-flex min-h-9 items-center justify-center rounded-control bg-blue-600 dark:bg-blue-600 px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-blue-700 disabled:opacity-60 cursor-pointer transition-colors"
+              >
+                Ubah Jadwal
+              </button>
+            )}
+            {onCompleteBooking && status !== "selesai" && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => onCompleteBooking(event)}
+                className="inline-flex min-h-9 items-center justify-center rounded-control border border-emerald-600/30 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 disabled:opacity-60 cursor-pointer transition-colors"
+              >
+                Tandai Selesai
+              </button>
+            )}
+            {onCancelBooking && status !== "dibatalkan" && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => setConfirm("batal")}
+                className="inline-flex min-h-9 items-center justify-center rounded-control border border-amber-600/30 bg-amber-50 dark:bg-amber-950/40 px-3 py-1.5 text-xs sm:text-sm font-semibold text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40 disabled:opacity-60 cursor-pointer transition-colors"
+              >
+                Batalkan
+              </button>
+            )}
+            {onDeleteBooking && (
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => setConfirm("hapus")}
+                className="inline-flex min-h-9 items-center justify-center rounded-control border border-red-600/30 bg-red-50 dark:bg-red-950/40 px-3 py-1.5 text-xs sm:text-sm font-semibold text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40 disabled:opacity-60 cursor-pointer transition-colors"
+              >
+                Hapus
+              </button>
+            )}
+            {!bisaUbah && (
+              <p className="text-xs sm:text-sm text-muted">
+                Hanya pembuat jadwal atau Super Admin yang dapat mengubah data ini.
+              </p>
+            )}
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg bg-gray-950 hover:bg-gray-800 dark:bg-[#1E293B] dark:hover:bg-[#334155] dark:border dark:border-slate-700 px-5 py-2.5 text-xs font-semibold text-white cursor-pointer transition-colors"
+            className="min-h-9 rounded-control bg-foreground px-4 py-2 text-xs sm:text-sm font-semibold text-background hover:opacity-90 cursor-pointer transition-opacity"
           >
             Tutup
           </button>

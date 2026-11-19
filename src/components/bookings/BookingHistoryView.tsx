@@ -17,12 +17,14 @@ function formatDate(value: string) {
 
 function statusOf(event: BookingEvent, today: Date) {
   if (event.status === "dibatalkan") return "Dibatalkan";
+  if (event.status === "kadaluwarsa") return "Kadaluwarsa";
+  if (event.status === "selesai") return "Selesai";
   const [y, m, d] = event.date.split("-").map(Number);
   const day = new Date(y, m - 1, d);
   day.setHours(0, 0, 0, 0);
   const now = new Date(today);
   now.setHours(0, 0, 0, 0);
-  return day < now ? "Selesai" : "Terjadwal";
+  return day < now ? "Kadaluwarsa" : "Terjadwal";
 }
 
 export function BookingHistoryView({ events, onEventClick, currentDate }: Props) {

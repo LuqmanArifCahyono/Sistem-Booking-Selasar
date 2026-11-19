@@ -41,3 +41,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# database lokal (dev)
+/prisma/*.db
+/prisma/*.db-journal
+
+# Prisma Client hasil generate (dibuat ulang oleh `npm run db:generate`)
+/src/generated
+
+# berkas uji lokal
+/cookies.txt
+/cj_user.txt
