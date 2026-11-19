@@ -44,36 +44,41 @@ export function Sidebar({
       {isOpenMobile && (
         <div
           onClick={onCloseMobile}
-          className="fixed inset-0 bg-black/40 dark:bg-black/70 z-40 lg:hidden backdrop-blur-2xs transition-opacity cursor-pointer"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
           aria-hidden="true"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed lg:static top-0 left-0 z-50 h-full w-[270px] bg-white dark:bg-[#0F172A] border-r border-gray-200 dark:border-[#1E293B] flex flex-col justify-between p-4 overflow-y-auto transition-transform duration-300 ease-in-out shrink-0 ${
+        className={`fixed lg:static top-0 left-0 z-50 h-full w-[280px] bg-surface border-r border-line flex flex-col justify-between p-4 sm:p-5 overflow-y-auto transition-transform duration-300 ease-in-out shrink-0 select-none ${
           isOpenMobile
-            ? "translate-x-0 shadow-xl"
+            ? "translate-x-0 shadow-2xl"
             : "-translate-x-full lg:translate-x-0"
         }`}
       >
         <div className="space-y-6">
-          {/* Logo & Header */}
-          <div className="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-[#1E293B]">
-            <div>
-              <h1 className="text-xl font-bold text-gray-950 dark:text-[#F8FAFC] tracking-tight leading-none">
-                SelasarSpace
-              </h1>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8] mt-1 font-normal">
-                Sistem Peminjaman Tempat
-              </p>
+          {/* Brand Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-line">
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-control bg-accent text-accent-foreground font-bold text-sm flex items-center justify-center shadow-xs">
+                S
+              </span>
+              <div>
+                <h1 className="text-base font-bold text-foreground tracking-tight leading-none">
+                  SelasarSpace
+                </h1>
+                <p className="text-[11px] font-medium text-muted mt-1 leading-none">
+                  Fasilitas Selasar Utama
+                </p>
+              </div>
             </div>
 
             {/* Mobile Close Button */}
             <button
               type="button"
               onClick={onCloseMobile}
-              className="lg:hidden p-1.5 rounded-lg text-gray-500 dark:text-[#94A3B8] hover:bg-gray-100 dark:hover:bg-[#1E293B] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+              className="lg:hidden p-1.5 rounded-control text-muted hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent cursor-pointer"
               aria-label="Tutup menu sidebar"
             >
               <svg
@@ -93,7 +98,7 @@ export function Sidebar({
           </div>
 
           {/* Mini Calendar Widget */}
-          <div className="pt-1">
+          <div className="pt-0.5">
             <MiniCalendar
               currentDate={currentDate}
               selectedDate={selectedDate}
@@ -118,27 +123,31 @@ export function Sidebar({
         </div>
 
         {/* Footer Sidebar */}
-        <div className="pt-4 mt-6 border-t border-gray-100 dark:border-[#1E293B] space-y-3 text-xs">
+        <div className="pt-4 mt-6 border-t border-line space-y-3.5 text-xs">
           {user && (
-            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 dark:bg-[#1E293B]/60 border border-gray-200/70 dark:border-[#334155]">
-              <div className="min-w-0 flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+            <div className="flex items-center justify-between p-2.5 rounded-panel bg-surface-muted/60 border border-line">
+              <div className="min-w-0 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
                   {user.name.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-gray-900 dark:text-[#F8FAFC] truncate leading-tight">
+                  <p className="text-xs font-bold text-foreground truncate leading-tight">
                     {user.name}
                   </p>
-                  <p className="text-[10px] text-gray-500 dark:text-[#94A3B8] truncate leading-tight">
-                    {user.role === "USER" ? "Mahasiswa" : user.role === "ADMIN" ? "Admin" : "Super Admin"}
+                  <p className="text-[11px] text-muted truncate leading-tight mt-0.5">
+                    {user.role === "USER"
+                      ? "Mahasiswa"
+                      : user.role === "ADMIN"
+                      ? "Admin Himpunan"
+                      : "Super Admin"}
                   </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => signOut({ redirectTo: "/login" })}
-                className="text-[11px] font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:underline px-1.5 py-0.5 rounded cursor-pointer shrink-0"
-                title="Keluar dari sesi"
+                className="text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 hover:underline px-1.5 py-0.5 cursor-pointer shrink-0"
+                title="Keluar dari akun"
               >
                 Keluar
               </button>
@@ -146,16 +155,16 @@ export function Sidebar({
           )}
 
           <div className="space-y-1">
-            <div className="text-gray-900 dark:text-[#F8FAFC] font-medium">Butuh bantuan?</div>
+            <div className="text-foreground font-medium text-xs">Butuh bantuan?</div>
             <button
               type="button"
               onClick={onOpenHelp}
-              className="text-blue-600 dark:text-[#93C5FD] hover:text-blue-700 dark:hover:text-blue-300 hover:underline inline-flex items-center gap-1 font-medium focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 rounded cursor-pointer"
+              className="text-accent hover:underline inline-flex items-center gap-1 font-semibold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded cursor-pointer"
             >
               Hubungi pengelola fasilitas ↗
             </button>
-            <div className="text-[11px] text-gray-400 dark:text-[#64748B] pt-1">
-              SelasarSpace · Layanan kampus
+            <div className="text-[11px] text-muted pt-1">
+              SelasarSpace · Layanan Kampus
             </div>
           </div>
         </div>

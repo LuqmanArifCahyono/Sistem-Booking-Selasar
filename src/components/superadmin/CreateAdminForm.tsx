@@ -82,7 +82,7 @@ export function CreateAdminForm({ organizations }: CreateAdminFormProps) {
         return;
       }
 
-      setNotice(`Akun ${payload.data.email} dibuat. Pemiliknya wajib ganti sandi saat login.`);
+      setNotice(`Akun ${payload.data.email} berhasil dibuat.`);
       setName("");
       setEmail("");
       setPassword("");
@@ -95,21 +95,22 @@ export function CreateAdminForm({ organizations }: CreateAdminFormProps) {
   }
 
   const inputClass =
-    "w-full rounded-control border border-line bg-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30";
+    "w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted/70 transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25 hover:border-line-hover";
+  const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted";
 
   if (organizations.length === 0) {
     return (
-      <p className="rounded-panel border border-dashed border-line p-6 text-center text-sm text-muted">
-        Belum ada himpunan. Tambahkan himpunan lebih dulu sebelum membuat akun admin.
-      </p>
+      <div className="rounded-xl border border-dashed border-line p-6 text-center text-xs text-muted">
+        Belum ada data organisasi. Tambahkan organisasi terlebih dahulu.
+      </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label htmlFor="org" className="mb-1.5 block text-sm font-semibold text-foreground">
+          <label htmlFor="org" className={labelClass}>
             Himpunan
           </label>
           <select
@@ -130,7 +131,7 @@ export function CreateAdminForm({ organizations }: CreateAdminFormProps) {
         </div>
 
         <div>
-          <label htmlFor="position" className="mb-1.5 block text-sm font-semibold text-foreground">
+          <label htmlFor="position" className={labelClass}>
             Jabatan
           </label>
           <select
@@ -153,8 +154,8 @@ export function CreateAdminForm({ organizations }: CreateAdminFormProps) {
       </div>
 
       <div>
-        <label htmlFor="admin-name" className="mb-1.5 block text-sm font-semibold text-foreground">
-          Nama pemegang akun
+        <label htmlFor="admin-name" className={labelClass}>
+          Nama Pengurus
         </label>
         <input
           id="admin-name"
@@ -168,8 +169,8 @@ export function CreateAdminForm({ organizations }: CreateAdminFormProps) {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label htmlFor="admin-email" className="mb-1.5 block text-sm font-semibold text-foreground">
-            Email
+          <label htmlFor="admin-email" className={labelClass}>
+            Alamat Email
           </label>
           <input
             id="admin-email"
@@ -181,8 +182,8 @@ export function CreateAdminForm({ organizations }: CreateAdminFormProps) {
           />
         </div>
         <div>
-          <label htmlFor="admin-password" className="mb-1.5 block text-sm font-semibold text-foreground">
-            Sandi awal
+          <label htmlFor="admin-password" className={labelClass}>
+            Sandi Default
           </label>
           <input
             id="admin-password"
@@ -195,28 +196,33 @@ export function CreateAdminForm({ organizations }: CreateAdminFormProps) {
         </div>
       </div>
 
-      <p className="text-xs leading-relaxed text-muted">
-        Pola email dan sandi terisi otomatis mengikuti jabatan dan himpunan. Pemegang akun
-        wajib mengganti sandi saat login pertama.
+      <p className="text-xs text-muted leading-relaxed">
+        Pola email dan sandi terisi otomatis mengikuti jabatan. Pengurus disarankan memperbarui sandi setelah berhasil login.
       </p>
 
       {error && (
-        <p className="rounded-control border border-status-cancelled/30 bg-status-cancelled/10 p-3 text-sm font-medium text-status-cancelled">
+        <div
+          role="alert"
+          className="rounded-xl border border-status-cancelled/30 bg-status-cancelled/10 p-3 text-xs font-semibold text-status-cancelled animate-in fade-in duration-200"
+        >
           {error}
-        </p>
+        </div>
       )}
       {notice && (
-        <p className="rounded-control border border-status-done/30 bg-status-done/10 p-3 text-sm font-medium text-status-done">
+        <div
+          role="status"
+          className="rounded-xl border border-status-done/30 bg-status-done/10 p-3 text-xs font-semibold text-status-done animate-in fade-in duration-200"
+        >
           {notice}
-        </p>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="min-h-11 rounded-control bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70"
+        className="flex min-h-11 w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-xs sm:text-sm font-semibold text-accent-foreground shadow-xs transition-all hover:bg-accent-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer"
       >
-        {isSubmitting ? "Membuat akun..." : "Buat akun admin"}
+        {isSubmitting ? "Membuat akun..." : "Buat Akun Admin"}
       </button>
     </form>
   );

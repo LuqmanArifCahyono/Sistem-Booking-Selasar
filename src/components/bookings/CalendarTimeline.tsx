@@ -48,7 +48,7 @@ function eventPosition(event: BookingEvent) {
 
   return {
     top: ((clippedStart - visibleStart) / 60) * HOUR_HEIGHT,
-    height: Math.max(((clippedEnd - clippedStart) / 60) * HOUR_HEIGHT, 28),
+    height: Math.max(((clippedEnd - clippedStart) / 60) * HOUR_HEIGHT, 32),
     visible: end > visibleStart && start < visibleEnd && end > start,
   };
 }
@@ -71,15 +71,16 @@ export function CalendarTimeline({
   );
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-white dark:bg-[#090D16] transition-colors">
+    <div className="flex-1 min-h-0 flex flex-col bg-background transition-colors select-none">
       <div className="flex-1 min-h-0 overflow-auto">
         <div className={isWeek ? "min-w-[850px]" : "min-w-[420px]"}>
-          <div className="sticky top-0 z-20 border-b border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#0F172A] transition-colors">
+          {/* Sticky Header with Day Columns */}
+          <div className="sticky top-0 z-20 border-b border-line bg-surface transition-colors">
             <div
               className="grid"
-              style={{ gridTemplateColumns: `68px repeat(${dates.length}, minmax(0, 1fr))` }}
+              style={{ gridTemplateColumns: `72px repeat(${dates.length}, minmax(0, 1fr))` }}
             >
-              <div className="h-[58px] flex items-center justify-center border-r border-gray-200 dark:border-[#1E293B] text-[10px] font-medium tracking-wide text-gray-500 dark:text-[#94A3B8]">
+              <div className="h-[60px] flex items-center justify-center border-r border-line text-xs font-mono font-medium tracking-wider text-muted">
                 WIB
               </div>
               {dates.map((date) => {
@@ -90,22 +91,20 @@ export function CalendarTimeline({
                 return (
                   <div
                     key={dateKey(date)}
-                    className={`h-[58px] flex flex-col items-center justify-center gap-0.5 border-r border-gray-200 dark:border-[#1E293B] transition-colors ${
-                      selected ? "bg-blue-50/60 dark:bg-blue-950/30" : "bg-white dark:bg-[#0F172A]"
+                    className={`h-[60px] flex flex-col items-center justify-center gap-1 border-r border-line transition-colors ${
+                      selected ? "bg-accent/5 dark:bg-accent/15" : "bg-surface"
                     }`}
                   >
-                    <span className={`text-[10px] font-semibold tracking-wide uppercase ${selected ? "text-gray-950 dark:text-[#F8FAFC]" : "text-gray-500 dark:text-[#94A3B8]"}`}>
+                    <span className={`text-[11px] font-semibold tracking-wider uppercase ${selected ? "text-accent" : "text-muted"}`}>
                       {weekday.slice(0, 3)}
                     </span>
                     <span
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs ${
+                      className={`inline-flex min-w-6 h-6 px-1.5 items-center justify-center text-xs rounded-control ${
                         isToday
-                          ? selected
-                            ? "bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] font-bold ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-[#0F172A] dark:border dark:border-[#93C5FD]/40"
-                            : "bg-gray-950 dark:bg-[#1E293B] text-white dark:text-[#93C5FD] font-bold dark:border dark:border-[#93C5FD]/40"
+                          ? "bg-accent text-white font-bold shadow-xs"
                           : selected
-                            ? "bg-amber-500 text-white font-semibold"
-                            : "text-gray-800 dark:text-[#CBD5E1]"
+                            ? "bg-foreground text-background font-bold"
+                            : "text-foreground/80 font-medium"
                       }`}
                       aria-label={`${formatDate(date)}${isToday ? ", hari ini" : ""}${selected ? ", dipilih" : ""}`}
                     >
@@ -117,19 +116,21 @@ export function CalendarTimeline({
             </div>
           </div>
 
+          {/* Timeline Grid */}
           <div
             className="grid"
-            style={{ gridTemplateColumns: `68px repeat(${dates.length}, minmax(0, 1fr))` }}
+            style={{ gridTemplateColumns: `72px repeat(${dates.length}, minmax(0, 1fr))` }}
             role="group"
             aria-label={isWeek ? "Jadwal satu minggu" : `Jadwal ${formatDate(dates[0])}`}
           >
-            <div className="relative border-r border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#0F172A]" style={{ height: TOTAL_HEIGHT }}>
+            {/* Hour Scale Column */}
+            <div className="relative border-r border-line bg-surface" style={{ height: TOTAL_HEIGHT }}>
               {Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, index) => {
                 const hour = START_HOUR + index;
                 return (
                   <div
                     key={hour}
-                    className={`absolute left-0 right-0 pr-2 text-right text-[10px] text-gray-500 dark:text-[#94A3B8] ${
+                    className={`absolute left-0 right-0 pr-2.5 text-right font-mono text-xs text-muted ${
                       index === 0
                         ? "translate-y-0"
                         : index === END_HOUR - START_HOUR
@@ -144,6 +145,7 @@ export function CalendarTimeline({
               })}
             </div>
 
+            {/* Date Columns */}
             {dates.map((date) => {
               const dayEvents = filteredEvents.filter((event) => event.date === dateKey(date));
               const selected = sameDay(date, selectedDate);
@@ -152,8 +154,8 @@ export function CalendarTimeline({
               return (
                 <div
                   key={dateKey(date)}
-                  className={`relative border-r border-gray-200 dark:border-[#1E293B] [background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_63px,#e5e7eb_63px,#e5e7eb_64px)] dark:[background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_63px,#1e293b_63px,#1e293b_64px)] ${
-                    selected ? "bg-blue-50/25 dark:bg-blue-950/20" : isToday ? "bg-gray-50/40 dark:bg-[#0F172A]/40" : "bg-white dark:bg-[#090D16]"
+                  className={`relative border-r border-line [background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_63px,var(--color-line)_63px,var(--color-line)_64px)] ${
+                    selected ? "bg-accent/5" : isToday ? "bg-surface-muted/30" : "bg-surface"
                   }`}
                   style={{
                     height: TOTAL_HEIGHT,
@@ -169,18 +171,16 @@ export function CalendarTimeline({
                         type="button"
                         onClick={() => onEventClick(event)}
                         aria-label={`${event.title}, ${event.organizationName}, ${event.startTime} sampai ${event.endTime} WIB`}
-                        className={`absolute z-10 left-1 right-1 overflow-hidden rounded-md border p-2 text-left shadow-[0_1px_1px_rgba(15,23,42,0.05)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 cursor-pointer ${event.borderClass} ${event.bgClass} ${event.textClass}`}
+                        className={`absolute z-10 left-1.5 right-1.5 overflow-hidden rounded-control border p-2 text-left shadow-2xs hover:shadow-xs transition-all active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent cursor-pointer ${event.borderClass} ${event.bgClass} ${event.textClass}`}
                         style={{ top: position.top + 2, height: Math.max(position.height - 4, 32) }}
                       >
-                        <span className="block truncate text-[11px] font-semibold leading-tight">
+                        <span className="block truncate text-xs font-semibold leading-tight">
                           {event.title}
                         </span>
-                        <span className={`mt-0.5 block truncate text-[10px] ${event.subtextClass}`}>
-                          {event.organizationName}
-                        </span>
-                        <span className={`mt-1 block text-[10px] font-medium ${event.subtextClass}`}>
-                          {event.startTime}–{event.endTime}
-                        </span>
+                        <div className="flex items-center justify-between gap-1 mt-1 text-[11px] leading-none opacity-90">
+                          <span className="truncate font-medium">{event.organizationName}</span>
+                          <span className="font-mono shrink-0">{event.startTime}–{event.endTime}</span>
+                        </div>
                       </button>
                     );
                   })}
@@ -191,15 +191,16 @@ export function CalendarTimeline({
         </div>
       </div>
 
-      <footer className="flex shrink-0 items-center justify-between border-t border-gray-100 dark:border-[#1E293B] bg-white dark:bg-[#0F172A] px-4 py-2 text-xs text-gray-500 dark:text-[#94A3B8] transition-colors">
-        <span className="text-gray-600 dark:text-[#CBD5E1]">
+      {/* Footer Status Bar */}
+      <footer className="flex shrink-0 items-center justify-between border-t border-line bg-surface px-5 py-3 text-xs text-muted transition-colors">
+        <span className="font-medium text-foreground">
           {filteredEvents.length > 0
-            ? `${filteredEvents.length} jadwal ditampilkan`
+            ? `${filteredEvents.length} jadwal peminjaman ditampilkan`
             : isWeek
-              ? "Tidak ada jadwal pada minggu ini"
-              : "Tidak ada jadwal pada tanggal ini"}
+              ? "Tidak ada peminjaman pada minggu ini"
+              : "Tidak ada peminjaman pada tanggal ini"}
         </span>
-        <span className="text-gray-400 dark:text-[#64748B]">{isWeek ? "Tampilan mingguan" : formatDate(dates[0])}</span>
+        <span className="font-mono text-muted">{isWeek ? "Tampilan Mingguan" : formatDate(dates[0])}</span>
       </footer>
     </div>
   );

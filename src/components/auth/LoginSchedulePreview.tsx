@@ -243,16 +243,16 @@ export function LoginSchedulePreview() {
   const formattedFreeHours = formatMinutesFriendly(totalFreeMinutes);
 
   return (
-    <div className="flex flex-col gap-5 w-full">
+    <div className="flex flex-col gap-4 w-full">
       {/* Main Schedule Preview Card */}
-      <div className="bg-[#FFFFFF] dark:bg-[#111827] border border-[#E2E8F0] dark:border-[#1E293B] rounded-2xl p-5 sm:p-6 shadow-xs transition-colors">
+      <div className="bg-surface border border-line rounded-2xl p-5 sm:p-6 shadow-sm transition-all">
         {/* Card Header with Icon & Day Switcher */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-4 border-b border-[#E2E8F0]/70 dark:border-[#1E293B]">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-4 border-b border-line">
           <div>
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-[#2563EB]/10 dark:bg-[#93C5FD]/10 border border-[#2563EB]/20 dark:border-[#93C5FD]/20 flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0 text-accent">
                 <svg
-                  className="w-4 h-4 text-[#2563EB] dark:text-[#93C5FD]"
+                  className="w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -265,34 +265,36 @@ export function LoginSchedulePreview() {
                   />
                 </svg>
               </div>
-              <h2 className="text-base sm:text-lg font-bold text-[#0F172B] dark:text-[#F8FAFC]">
-                Pratinjau Ketersediaan Selasar
-              </h2>
-            </div>
-            <div className="flex items-center gap-2 mt-1.5 ml-0.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00BC7D] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00BC7D]"></span>
-              </span>
-              <p className="text-xs text-[#62748E] dark:text-[#94A3B8]">
-                {hasAgendas
-                  ? `Sinkronisasi database · ${freeSlots.length} slot kosong & ${occupiedAgendas.length} agenda terisi ${
-                      isHariIni ? "hari ini" : isBesok ? "besok" : ""
-                    }`
-                  : `Sinkronisasi database · Selasar 100% bebas sepanjang hari`}
-              </p>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-foreground">
+                  Pratinjau Ketersediaan Selasar
+                </h2>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-done opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-status-done"></span>
+                  </span>
+                  <p className="text-xs text-muted">
+                    {hasAgendas
+                      ? `Sinkronisasi database · ${freeSlots.length} slot kosong & ${occupiedAgendas.length} agenda terisi ${
+                          isHariIni ? "hari ini" : isBesok ? "besok" : ""
+                        }`
+                      : `Sinkronisasi database · Selasar 100% bebas sepanjang hari`}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Day Toggle Buttons: Hari Ini & Besok */}
-          <div className="flex items-center self-start bg-[#F1F5F9] dark:bg-[#0F172A] p-1 rounded-lg border border-[#E2E8F0] dark:border-[#1E293B]">
+          <div className="flex items-center self-start bg-surface-muted p-1 rounded-xl border border-line">
             <button
               type="button"
               onClick={() => setSelectedDateIso(todayIso)}
-              className={`px-3 py-1.5 text-xs rounded-md transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
+              className={`px-3.5 py-1.5 text-xs rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 isHariIni
-                  ? "bg-[#FFFFFF] dark:bg-[#1E293B] text-[#2563EB] dark:text-[#93C5FD] shadow-xs font-semibold"
-                  : "text-[#62748E] dark:text-[#94A3B8] hover:text-[#0F172B] dark:hover:text-[#F8FAFC] font-medium"
+                  ? "bg-surface text-accent shadow-xs font-semibold"
+                  : "text-muted hover:text-foreground font-medium"
               }`}
               aria-pressed={isHariIni}
             >
@@ -301,10 +303,10 @@ export function LoginSchedulePreview() {
             <button
               type="button"
               onClick={() => setSelectedDateIso(tomorrowIso)}
-              className={`px-3 py-1.5 text-xs rounded-md transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB] ${
+              className={`px-3.5 py-1.5 text-xs rounded-lg transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 isBesok
-                  ? "bg-[#FFFFFF] dark:bg-[#1E293B] text-[#2563EB] dark:text-[#93C5FD] shadow-xs font-semibold"
-                  : "text-[#62748E] dark:text-[#94A3B8] hover:text-[#0F172B] dark:hover:text-[#F8FAFC] font-medium"
+                  ? "bg-surface text-accent shadow-xs font-semibold"
+                  : "text-muted hover:text-foreground font-medium"
               }`}
               aria-pressed={isBesok}
             >
@@ -314,13 +316,10 @@ export function LoginSchedulePreview() {
         </div>
 
         {/* Date Display Row dengan Fitur Pilih Tanggal Bebas */}
-        <div className="flex items-center justify-between py-3 border-b border-[#E2E8F0]/70 dark:border-[#1E293B]">
+        <div className="flex items-center justify-between py-3.5 border-b border-line">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-semibold text-[#62748E] dark:text-[#94A3B8] uppercase tracking-wide">
+            <span className="text-xs font-semibold text-muted uppercase tracking-wider">
               Jadwal Tanggal
-            </span>
-            <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8]/80 font-normal hidden sm:inline">
-              (Klik tanggal untuk pilih kalender)
             </span>
           </div>
 
@@ -336,11 +335,11 @@ export function LoginSchedulePreview() {
                   handleOpenPicker();
                 }
               }}
-              className="inline-flex items-center gap-2 text-xs font-bold text-[#2563EB] dark:text-[#93C5FD] bg-[#2563EB]/10 dark:bg-[#93C5FD]/10 hover:bg-[#2563EB]/15 dark:hover:bg-[#93C5FD]/20 border border-[#2563EB] dark:border-[#93C5FD]/40 px-3 py-1.5 rounded-lg shadow-2xs transition-all cursor-pointer group select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+              className="inline-flex items-center gap-2 text-xs font-bold text-accent bg-accent/10 hover:bg-accent/15 border border-accent/30 px-3 py-1.5 rounded-lg shadow-2xs transition-all cursor-pointer group select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               title="Klik di mana saja untuk memilih tanggal"
             >
               <svg
-                className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#93C5FD] shrink-0 pointer-events-none"
+                className="w-3.5 h-3.5 text-accent shrink-0 pointer-events-none"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -354,7 +353,7 @@ export function LoginSchedulePreview() {
               </svg>
               <span className="pointer-events-none">{dateFormatted}</span>
               <svg
-                className="w-3 h-3 text-[#2563EB] dark:text-[#93C5FD] opacity-60 group-hover:opacity-100 transition-opacity shrink-0 pointer-events-none"
+                className="w-3 h-3 text-accent opacity-60 group-hover:opacity-100 transition-opacity shrink-0 pointer-events-none"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -378,69 +377,69 @@ export function LoginSchedulePreview() {
         </div>
 
         {/* 1. RINGKASAN CEPAT KETERSEDIAAN */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-2.5 py-3 border-b border-[#E2E8F0]/70 dark:border-[#1E293B]">
-          <div className="flex flex-col p-2.5 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#1E293B] transition-colors">
-            <span className="text-[10px] font-semibold text-[#62748E] dark:text-[#94A3B8] uppercase tracking-wider">
+        <div className="grid grid-cols-3 gap-2.5 py-3.5 border-b border-line">
+          <div className="flex flex-col p-3 rounded-xl bg-surface-muted/60 border border-line transition-colors">
+            <span className="text-xs font-semibold text-muted uppercase tracking-wider">
               Agenda Aktif
             </span>
-            <span className="text-sm sm:text-base font-bold text-[#0F172B] dark:text-[#F8FAFC] mt-0.5">
+            <span className="text-base sm:text-lg font-bold tabular-nums text-foreground mt-1">
               {hasAgendas ? `${occupiedAgendas.length} Kegiatan` : "0 Kegiatan"}
             </span>
-            <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8] mt-0.5 truncate">
+            <span className="text-xs text-muted mt-0.5 truncate">
               {hasAgendas ? "Terjadwal di selasar" : "Selasar kosong"}
             </span>
           </div>
 
-          <div className="flex flex-col p-2.5 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#1E293B] transition-colors">
-            <span className="text-[10px] font-semibold text-[#62748E] dark:text-[#94A3B8] uppercase tracking-wider">
+          <div className="flex flex-col p-3 rounded-xl bg-surface-muted/60 border border-line transition-colors">
+            <span className="text-xs font-semibold text-muted uppercase tracking-wider">
               Waktu Terpakai
             </span>
-            <span className="text-sm sm:text-base font-bold text-[#BB4D00] dark:text-[#FE9A00] mt-0.5">
+            <span className="text-base sm:text-lg font-bold tabular-nums text-status-expired mt-1">
               {formattedOccupiedHours}
             </span>
-            <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8] mt-0.5 truncate">
+            <span className="text-xs text-muted mt-0.5 truncate">
               {hasAgendas ? "Dari 13 jam operasional" : "100% jam tersedia"}
             </span>
           </div>
 
-          <div className="flex flex-col p-2.5 rounded-xl bg-[#F8FAFC] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-[#1E293B] transition-colors">
-            <span className="text-[10px] font-semibold text-[#62748E] dark:text-[#94A3B8] uppercase tracking-wider">
+          <div className="flex flex-col p-3 rounded-xl bg-surface-muted/60 border border-line transition-colors">
+            <span className="text-xs font-semibold text-muted uppercase tracking-wider">
               Waktu Tersedia
             </span>
-            <span className="text-sm sm:text-base font-bold text-[#008A5B] dark:text-[#00E599] mt-0.5">
+            <span className="text-base sm:text-lg font-bold tabular-nums text-status-done mt-1">
               {formattedFreeHours}
             </span>
-            <span className="text-[10px] text-[#62748E] dark:text-[#94A3B8] mt-0.5 truncate">
-              {freeSlots.length > 0 ? `${freeSlots.length} slot kosong bebas` : "Jadwal penuh"}
+            <span className="text-xs text-muted mt-0.5 truncate">
+              {freeSlots.length > 0 ? `${freeSlots.length} slot bebas` : "Jadwal penuh"}
             </span>
           </div>
         </div>
 
         {/* 2. DAFTAR SLOT WAKTU KOSONG (TERSEDIA) */}
-        <div className="pt-3 pb-3">
-          <div className="flex items-center justify-between pb-1.5">
+        <div className="pt-3.5 pb-3">
+          <div className="flex items-center justify-between pb-2">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#00BC7D]" />
-              <h3 className="text-xs font-bold text-[#0F172B] dark:text-[#F8FAFC]">
+              <span className="w-2 h-2 rounded-full bg-status-done" />
+              <h3 className="text-xs font-bold text-foreground">
                 Slot Waktu Kosong (Tersedia):
               </h3>
             </div>
-            <span className="text-[11px] text-[#008A5B] dark:text-[#00E599] font-semibold">
+            <span className="text-xs text-status-done font-semibold">
               {freeSlots.length} slot bebas diajukan
             </span>
           </div>
 
           {freeSlots.length > 0 ? (
-            <div className="my-1 space-y-1">
+            <div className="my-1 space-y-1.5">
               {freeSlots.map((slot, index) => (
                 <div
                   key={`free-slot-${index}`}
-                  className="flex items-center justify-between gap-3 py-2 px-2.5 rounded-lg hover:bg-[#F8FAFC] dark:hover:bg-[#1E293B]/40 transition-colors"
+                  className="flex items-center justify-between gap-3 py-2 px-3 rounded-xl bg-surface-muted/30 border border-line/60 hover:bg-surface-muted transition-colors"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="flex items-center gap-1.5 text-xs whitespace-nowrap shrink-0">
                       <svg
-                        className="w-3.5 h-3.5 text-[#62748E] dark:text-[#94A3B8]"
+                        className="w-3.5 h-3.5 text-muted"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -448,55 +447,55 @@ export function LoginSchedulePreview() {
                         <circle cx="12" cy="12" r="10" strokeWidth="2" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l3 2" />
                       </svg>
-                      <span className="font-bold text-[#008A5B] dark:text-[#00E599]">
+                      <span className="font-mono font-bold text-status-done">
                         {slot.time}
                       </span>
                     </div>
 
-                    <p className="text-xs text-[#314158] dark:text-[#CBD5E1] truncate font-normal">
-                      Waktu Bebas Selasar — {slot.durationLabel} ({slot.subtext})
+                    <p className="text-xs text-foreground/80 truncate">
+                      Waktu Bebas Selasar • {slot.durationLabel} ({slot.subtext})
                     </p>
                   </div>
 
-                  <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#00BC7D]/10 dark:bg-[#00BC7D]/15 border border-[#00BC7D]/30 text-[#008A5B] dark:text-[#00E599]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00BC7D] shrink-0" />
-                    <span className="text-[11px] font-bold">Tersedia</span>
+                  <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-status-done/10 border border-status-done/30 text-status-done">
+                    <span className="w-1.5 h-1.5 rounded-full bg-status-done shrink-0" />
+                    <span className="text-xs font-semibold">Tersedia</span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-2.5 px-3 rounded-lg bg-[#F8FAFC] dark:bg-[#0F172A] text-xs text-[#62748E] dark:text-[#94A3B8]">
+            <div className="py-3 px-3.5 rounded-xl bg-surface-muted text-xs text-muted">
               Tidak ada slot kosong yang tersedia pada rentang 08:00–21:00.
             </div>
           )}
         </div>
 
         {/* 3. DAFTAR RINCIAN KEGIATAN (TERISI) */}
-        <div className="pt-3 border-t border-[#E2E8F0]/70 dark:border-[#1E293B]">
-          <div className="flex items-center justify-between pb-1.5">
+        <div className="pt-3.5 border-t border-line">
+          <div className="flex items-center justify-between pb-2">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#FE9A00]" />
-              <h3 className="text-xs font-bold text-[#0F172B] dark:text-[#F8FAFC]">
+              <span className="w-2 h-2 rounded-full bg-status-expired" />
+              <h3 className="text-xs font-bold text-foreground">
                 Daftar Rincian Kegiatan (Terisi):
               </h3>
             </div>
-            <span className="text-[11px] text-[#BB4D00] dark:text-[#FE9A00] font-semibold">
+            <span className="text-xs text-status-expired font-semibold">
               {occupiedAgendas.length} slot terisi
             </span>
           </div>
 
           {hasAgendas ? (
-            <div className="my-1 space-y-1">
+            <div className="my-1 space-y-1.5">
               {occupiedAgendas.map((agenda, index) => (
                 <div
                   key={`${selectedDateIso}-agenda-${index}`}
-                  className="flex items-center justify-between gap-3 py-2 px-2.5 rounded-lg hover:bg-[#F1F5F9]/70 dark:hover:bg-[#1E293B]/40 transition-colors"
+                  className="flex items-center justify-between gap-3 py-2 px-3 rounded-xl bg-surface-muted/30 border border-line/60 hover:bg-surface-muted transition-colors"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="flex items-center gap-1.5 text-xs whitespace-nowrap shrink-0">
                       <svg
-                        className="w-3.5 h-3.5 text-[#62748E] dark:text-[#94A3B8]"
+                        className="w-3.5 h-3.5 text-muted"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -504,26 +503,26 @@ export function LoginSchedulePreview() {
                         <circle cx="12" cy="12" r="10" strokeWidth="2" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l3 2" />
                       </svg>
-                      <span className="font-bold text-[#BB4D00] dark:text-[#FE9A00]">
+                      <span className="font-mono font-bold text-status-expired">
                         {agenda.time}
                       </span>
                     </div>
 
-                    <p className="text-xs text-[#314158] dark:text-[#CBD5E1] truncate font-normal">
+                    <p className="text-xs text-foreground/80 truncate">
                       {agenda.agendaTitle}
                     </p>
                   </div>
 
-                  <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FE9A00]/10 dark:bg-[#FE9A00]/15 border border-[#FE9A00]/30 text-[#BB4D00] dark:text-[#FE9A00]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FE9A00] shrink-0" />
-                    <span className="text-[11px] font-bold">Terisi</span>
+                  <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-status-expired/10 border border-status-expired/30 text-status-expired">
+                    <span className="w-1.5 h-1.5 rounded-full bg-status-expired shrink-0" />
+                    <span className="text-xs font-semibold">Terisi</span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-2.5 px-3 rounded-lg bg-[#00BC7D]/5 dark:bg-[#00BC7D]/10 text-xs text-[#008A5B] dark:text-[#00E599] flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00BC7D]" />
+            <div className="py-3 px-3.5 rounded-xl bg-status-done/5 border border-status-done/20 text-xs text-status-done flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-status-done shrink-0" />
               <span>Tidak ada kegiatan terjadwal pada tanggal ini. Seluruh jam kegiatan bebas dan dapat diajukan.</span>
             </div>
           )}
@@ -531,35 +530,35 @@ export function LoginSchedulePreview() {
       </div>
 
       {/* Three Key System Features: Dropdown Accordion */}
-      <div className="space-y-2.5">
+      <div className="space-y-2">
         {LOGIN_FEATURE_POINTS.map((feature) => {
           const isOpen = Boolean(expandedFeatures[feature.number]);
           return (
             <div
               key={feature.number}
-              className="rounded-xl border border-[#E2E8F0] dark:border-[#1E293B] border-b-2 border-b-[#2563EB] dark:border-b-[#93C5FD]/50 bg-[#FFFFFF] dark:bg-[#111827] hover:border-b-[#1D4ED8] dark:hover:border-b-[#93C5FD] transition-all overflow-hidden"
+              className="rounded-xl border border-line bg-surface hover:border-line-hover transition-all overflow-hidden"
             >
               <button
                 type="button"
                 onClick={() => toggleFeature(feature.number)}
-                className="w-full flex items-center justify-between gap-3 p-3 text-left cursor-pointer hover:bg-[#F8FAFC] dark:hover:bg-[#1E293B]/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+                className="w-full flex items-center justify-between gap-3 p-3.5 text-left cursor-pointer hover:bg-surface-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 aria-expanded={isOpen}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-[#2563EB]/10 dark:bg-[#93C5FD]/10 border border-[#2563EB]/20 dark:border-[#93C5FD]/20 flex items-center justify-center shrink-0 shadow-xs">
-                    <span className="text-sm font-bold text-[#2563EB] dark:text-[#93C5FD]">
+                  <div className="w-7 h-7 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-accent">
                       {feature.number}
                     </span>
                   </div>
-                  <h3 className="text-xs font-bold text-[#0F172B] dark:text-[#F8FAFC]">
+                  <h3 className="text-xs font-bold text-foreground">
                     {feature.title}
                   </h3>
                 </div>
 
-                <div className="shrink-0 p-1 text-[#62748E] dark:text-[#94A3B8]">
+                <div className="shrink-0 p-1 text-muted">
                   <svg
                     className={`w-4 h-4 transform transition-transform duration-200 ${
-                      isOpen ? "rotate-180 text-[#2563EB] dark:text-[#93C5FD]" : ""
+                      isOpen ? "rotate-180 text-accent" : ""
                     }`}
                     fill="none"
                     stroke="currentColor"
@@ -571,8 +570,8 @@ export function LoginSchedulePreview() {
               </button>
 
               {isOpen && feature.description && (
-                <div className="px-3.5 pb-3.5 pt-0 ml-10 text-[11px] text-[#62748E] dark:text-[#94A3B8] leading-relaxed border-t border-[#E2E8F0]/40 dark:border-[#1E293B] animate-in fade-in duration-150">
-                  <p className="pt-2">{feature.description}</p>
+                <div className="px-4 pb-3.5 pt-1 ml-10 text-xs text-muted leading-relaxed border-t border-line/50">
+                  <p>{feature.description}</p>
                 </div>
               )}
             </div>
@@ -581,10 +580,11 @@ export function LoginSchedulePreview() {
       </div>
 
       {/* Footer Branding Line */}
-      <div className="pt-2 text-xs text-[#62748E] dark:text-[#94A3B8] border-t border-[#E2E8F0]/70 dark:border-[#1E293B]">
+      <div className="pt-2 text-xs text-muted border-t border-line flex items-center justify-between">
         <p>
-          <span className="font-semibold text-[#314158] dark:text-[#CBD5E1]">SelasarSpace</span> Layanan kampus • Ruang kampus, lebih teratur.
+          <span className="font-semibold text-foreground">SelasarSpace</span> • Peminjaman Ruang Terpadu Kampus
         </p>
+        <span className="text-muted/70">v1.0 Institutional</span>
       </div>
     </div>
   );

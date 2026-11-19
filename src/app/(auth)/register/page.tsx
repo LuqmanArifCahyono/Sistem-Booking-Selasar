@@ -20,36 +20,37 @@ export default async function RegisterPage() {
   if (user) redirect(homePathForRole(user.role));
 
   return (
-    <main className="flex min-h-screen flex-col bg-background px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-3xl">
+    <main className="flex min-h-screen flex-col bg-background px-4 py-8 sm:px-6 lg:px-8 transition-colors duration-200">
+      <div className="mx-auto w-full max-w-2xl">
         <header className="mb-8 flex items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-control bg-accent text-base font-bold text-accent-foreground">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-base font-bold text-accent-foreground shadow-xs">
                 S
               </span>
               <span className="text-xl font-bold tracking-tight text-foreground">
                 SelasarSpace
               </span>
             </div>
-            <p className="mt-1 text-sm text-muted">Sistem Peminjaman Selasar Kampus</p>
+            <p className="mt-1 text-xs font-medium text-muted tracking-wide">
+              Sistem Peminjaman Selasar Kampus
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <Link
               href="/login"
-              className="inline-flex min-h-11 items-center rounded-control border border-line bg-surface px-3 py-2 text-sm font-semibold text-foreground hover:bg-surface-muted"
+              className="inline-flex min-h-10 items-center rounded-xl border border-line bg-surface px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-surface-muted transition-colors"
             >
-              Kembali ke masuk
+              ← Kembali ke Masuk
             </Link>
           </div>
         </header>
 
         <RegisterForm />
 
-        <p className="mx-auto mt-6 max-w-xl text-center text-sm leading-relaxed text-muted">
-          Pendaftaran ini hanya membuat akun mahasiswa dengan akses lihat saja. Akun Admin
-          Himpunan dan Super Admin dibuat oleh pengelola, bukan lewat halaman ini.
+        <p className="mx-auto mt-6 max-w-xl text-center text-xs leading-relaxed text-muted">
+          Pendaftaran ini khusus untuk akun mahasiswa dengan hak akses pemantauan (lihat jadwal). Akun Admin Himpunan dan Super Admin dikelola langsung oleh pihak institusi kampus.
         </p>
       </div>
     </main>

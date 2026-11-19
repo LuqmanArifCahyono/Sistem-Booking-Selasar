@@ -50,9 +50,10 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
   }, [event, onClose]);
 
   if (!event) return null;
+
   const inputClass =
-    "mt-1 w-full rounded-lg border border-gray-200 dark:border-[#334155] bg-white dark:bg-[#0F172A] px-3 py-2.5 text-sm text-gray-900 dark:text-[#F8FAFC] placeholder-gray-400 dark:placeholder-[#64748B] outline-none focus:border-blue-500 dark:focus:border-[#93C5FD] focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition-colors";
-  const labelClass = "block text-xs font-medium text-gray-700 dark:text-[#CBD5E1]";
+    "mt-1.5 w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted/70 transition-all focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25 hover:border-line-hover";
+  const labelClass = "block text-xs font-semibold uppercase tracking-wider text-muted";
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,7 +88,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
 
   return (
     <div
-      className="fixed inset-0 z-[130] flex items-center justify-center bg-gray-950/45 dark:bg-black/70 p-3 sm:p-6"
+      className="fixed inset-0 z-[130] flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-6 transition-all"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -96,32 +97,39 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
         role="dialog"
         aria-modal="true"
         aria-labelledby="booking-edit-title"
-        className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-[#1E293B] bg-white dark:bg-[#111827] shadow-2xl transition-colors"
+        className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl transition-all"
       >
-        <header className="flex items-start justify-between border-b border-gray-100 dark:border-[#1E293B] px-5 py-4">
-          <div>
-            <h2 id="booking-edit-title" className="text-lg font-semibold text-gray-950 dark:text-[#F8FAFC]">
-              Edit Peminjaman Tempat
-            </h2>
-            <p className="mt-1 text-xs text-gray-500 dark:text-[#94A3B8]">
-              Perbarui informasi jadwal peminjaman.
-            </p>
+        <header className="flex items-start justify-between border-b border-line px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <div>
+              <h2 id="booking-edit-title" className="text-lg font-bold tracking-tight text-foreground">
+                Edit Jadwal Peminjaman
+              </h2>
+              <p className="text-xs text-muted">Perbarui rincian waktu dan agenda kegiatan selasar</p>
+            </div>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup"
-            className="rounded-lg p-2 text-gray-500 dark:text-[#94A3B8] hover:bg-gray-100 dark:hover:bg-[#1E293B] cursor-pointer"
+            className="rounded-lg p-2 text-muted hover:text-foreground hover:bg-surface-muted transition-colors cursor-pointer"
           >
-            ✕
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </header>
 
         <form onSubmit={submit} className="flex min-h-0 flex-1 flex-col">
-          <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+          <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
             <div>
               <label className={labelClass} htmlFor="edit-title">
-                Nama event
+                Nama Kegiatan
               </label>
               <input
                 id="edit-title"
@@ -130,6 +138,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 maxLength={100}
+                placeholder="Contoh: Diskusi Terbuka Himpunan"
               />
             </div>
 
@@ -153,7 +162,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
               </div>
               <div>
                 <label className={labelClass} htmlFor="edit-pic">
-                  Penanggung jawab
+                  Penanggung Jawab
                 </label>
                 <input
                   id="edit-pic"
@@ -193,7 +202,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
               </div>
               <div>
                 <label className={labelClass} htmlFor="edit-start">
-                  Mulai
+                  Jam Mulai
                 </label>
                 <input
                   id="edit-start"
@@ -206,7 +215,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
               </div>
               <div>
                 <label className={labelClass} htmlFor="edit-end">
-                  Selesai
+                  Jam Selesai
                 </label>
                 <input
                   id="edit-end"
@@ -221,7 +230,7 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
 
             <div>
               <label className={labelClass} htmlFor="edit-purpose">
-                Keperluan peminjaman
+                Keperluan Peminjaman
               </label>
               <textarea
                 id="edit-purpose"
@@ -229,44 +238,46 @@ export function BookingEditModal({ event, organizations, onClose, onSave }: Prop
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
                 required
+                placeholder="Tuliskan tujuan dan keperluan penggunaan selasar..."
               />
             </div>
 
             <div>
               <label className={labelClass} htmlFor="edit-notes">
-                Catatan tambahan
+                Catatan Tambahan <span className="font-normal text-muted lowercase">(opsional)</span>
               </label>
               <textarea
                 id="edit-notes"
                 className={`${inputClass} min-h-16 resize-y`}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                placeholder="Kebutuhan listrik, penataan meja, dan catatan lainnya..."
               />
             </div>
 
             {error && (
               <p
                 role="alert"
-                className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-700 dark:text-red-300"
+                className="rounded-xl border border-status-cancelled/30 bg-status-cancelled/10 p-3.5 text-xs font-semibold text-status-cancelled animate-in fade-in duration-200"
               >
                 {error}
               </p>
             )}
           </div>
 
-          <footer className="flex justify-end gap-2 border-t border-gray-100 dark:border-[#1E293B] px-5 py-4">
+          <footer className="flex justify-end gap-2.5 border-t border-line bg-surface-muted/30 px-6 py-4">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-gray-200 dark:border-[#334155] px-4 py-2.5 text-xs font-medium text-gray-700 dark:text-[#CBD5E1] hover:bg-gray-50 dark:hover:bg-[#1E293B] cursor-pointer transition-colors"
+              className="rounded-xl border border-line bg-surface px-4 py-2.5 text-xs sm:text-sm font-semibold text-foreground hover:bg-surface-muted active:scale-[0.98] transition-all cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-blue-600 dark:bg-[#2563EB] px-4 py-2.5 text-xs font-semibold text-white hover:bg-blue-700 cursor-pointer shadow-xs transition-colors"
+              className="rounded-xl bg-accent px-5 py-2.5 text-xs sm:text-sm font-semibold text-accent-foreground shadow-xs hover:bg-accent-hover active:scale-[0.98] transition-all cursor-pointer"
             >
-              Simpan perubahan
+              Simpan Perubahan
             </button>
           </footer>
         </form>
