@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AdminOrganizationFilter } from "@/types/admin";
 import { formatDateDMY, MONTH_NAMES_ID } from "@/constants/admin";
@@ -85,18 +86,28 @@ export function AdminSidebar({
       <div className="p-4 sm:p-5 flex flex-col gap-5">
         {/* Brand & Badge Panel Sub-Admin */}
         <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <Link
-              href="/admin"
-              className="text-lg font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
-            >
-              SelasarSpace
-            </Link>
-            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-accent/10 text-accent border border-accent/25">
-              Panel Admin
-            </span>
+          <div className="flex items-center gap-2.5">
+            <div className="relative w-8 h-8 rounded-xl overflow-hidden border border-line shadow-xs shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+              <Image
+                src="/hanni.jpg"
+                alt="Logo SelasarSpace"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/admin"
+                className="text-lg font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
+              >
+                SelasarSpace
+              </Link>
+              <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-accent/10 text-accent border border-accent/25">
+                Panel Admin
+              </span>
+            </div>
           </div>
-          <p className="text-xs font-medium text-muted mt-0.5">
+          <p className="text-xs font-medium text-muted mt-1">
             Sistem Peminjaman Fasilitas Kampus
           </p>
         </div>

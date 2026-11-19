@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { LoginSchedulePreview } from "@/components/auth/LoginSchedulePreview";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -26,8 +27,14 @@ export default async function LoginPage() {
         <header className="flex items-center justify-between gap-4 mb-6">
           <div className="flex flex-col">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#0F172B] dark:bg-[#1E293B] dark:border dark:border-[#93C5FD]/30 flex items-center justify-center text-[#FFFFFF] dark:text-[#93C5FD] font-bold text-base shadow-xs">
-                S
+              <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-line shadow-xs shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+                <Image
+                  src="/hanni.jpg"
+                  alt="Logo SelasarSpace"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
               <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#0F172B] dark:text-[#F8FAFC]">
                 SelasarSpace

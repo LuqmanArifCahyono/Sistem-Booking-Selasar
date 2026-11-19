@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { MiniCalendar } from "./MiniCalendar";
 import { GuidancePanel } from "./GuidancePanel";
@@ -61,14 +62,19 @@ export function Sidebar({
           {/* Brand Header */}
           <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-2.5">
-              <span className="w-8 h-8 rounded-control bg-accent text-accent-foreground font-bold text-sm flex items-center justify-center shadow-xs">
-                S
-              </span>
+              <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-line shadow-xs shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+                <Image
+                  src="/hanni.jpg"
+                  alt="Logo SelasarSpace"
+                  fill
+                  className="object-cover"
+                />
+              </div>
               <div>
                 <h1 className="text-base font-bold text-foreground tracking-tight leading-none">
                   SelasarSpace
                 </h1>
-                <p className="text-[11px] font-medium text-muted mt-1 leading-none">
+                <p className="text-xs font-medium text-muted mt-1 leading-none">
                   Fasilitas Selasar Utama
                 </p>
               </div>

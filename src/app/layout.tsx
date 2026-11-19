@@ -16,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SelasarSpace - Sistem Peminjaman Tempat",
   description: "Sistem Peminjaman Tempat dan Fasilitas Selasar Kampus",
+  icons: {
+    icon: "/hanni.jpg",
+    apple: "/hanni.jpg",
+  },
 };
 
 export default function RootLayout({

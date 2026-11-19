@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/auth/RegisterForm";
@@ -25,9 +26,15 @@ export default async function RegisterPage() {
         <header className="mb-8 flex items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-base font-bold text-accent-foreground shadow-xs">
-                S
-              </span>
+              <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-line shadow-xs shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+                <Image
+                  src="/hanni.jpg"
+                  alt="Logo SelasarSpace"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
               <span className="text-xl font-bold tracking-tight text-foreground">
                 SelasarSpace
               </span>

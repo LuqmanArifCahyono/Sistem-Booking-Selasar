@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -22,9 +23,14 @@ export default async function ChangePasswordPage() {
       <div className="mx-auto w-full max-w-xl">
         <header className="mb-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-control bg-accent text-base font-bold text-accent-foreground">
-              S
-            </span>
+            <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-line shadow-xs shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+              <Image
+                src="/hanni.jpg"
+                alt="Logo SelasarSpace"
+                fill
+                className="object-cover"
+              />
+            </div>
             <span className="text-lg font-bold tracking-tight text-foreground">SelasarSpace</span>
           </div>
           <ThemeToggle />
