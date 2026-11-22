@@ -52,3 +52,7 @@ next-env.d.ts
 # berkas uji lokal
 /cookies.txt
 /cj_user.txt
+
+# database export / backup
+/database_backup/
+*.sql
