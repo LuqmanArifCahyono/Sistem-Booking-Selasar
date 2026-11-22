@@ -140,8 +140,8 @@ async function main() {
 
   // --- Penjaga rute --------------------------------------------------------
   console.log("\n[2] Penjaga rute (tanpa sesi)");
-  await check("Halaman utama wajib login", async () => {
-    const res = await http("/", { cookies: false });
+  await check("Halaman kalender wajib login", async () => {
+    const res = await http("/kalender", { cookies: false });
     expect(res.status === 307 || res.status === 302, `status ${res.status}`);
     expect((res.location ?? "").includes("/login"), `tujuan ${res.location}`);
     return res.location;
